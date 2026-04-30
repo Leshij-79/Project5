@@ -1,0 +1,21 @@
+from django.contrib.auth.models import AbstractUser
+from django.db import models
+
+class CustomUser(AbstractUser):
+    email = models.EmailField(unique=True, verbose_name="email")
+
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = ["username", "first_name", "last_name"]
+    EMAIL_FIELD = "email"
+
+    avatar = models.ImageField(upload_to="media/avatars", blank=True, null=True, verbose_name="Аватар")
+    phone_number = models.CharField(blank=True, null=True, max_length=15, verbose_name="Номер телефона")
+    city = models.CharField(blank=True, null=True, max_length=50, verbose_name="Город")
+
+    class Meta:
+        verbose_name = "Пользователь"
+        verbose_name_plural = "Пользователи"
+        ordering = ["email"]
+
+    def __str__(self):
+        return self.email
