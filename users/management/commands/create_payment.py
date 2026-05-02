@@ -21,6 +21,7 @@ class Command(BaseCommand):
         except (CustomUser.DoesNotExist, Course.DoesNotExist, Lesson.DoesNotExist) as e:
             self.stdout.write(self.style.ERROR(f"Ошибка при получении объектов: {e}"))
             return
+
         payments = [
             {
                 "user": user1,
