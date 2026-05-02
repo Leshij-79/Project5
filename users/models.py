@@ -84,4 +84,4 @@ class UserPayment(models.Model):
         ordering = ["user", "-date_payment"]
 
     def __str__(self):
-        return self.user
+        return f"Payment for {self.user.email} - {self.payment}"
