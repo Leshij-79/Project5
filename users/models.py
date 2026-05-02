@@ -40,7 +40,7 @@ class UserPayment(models.Model):
         help_text="Выберите пользователя",
     )
 
-    date_payment = models.DateField(
+    payment_date = models.DateField(
         verbose_name="Дата оплаты",
         help_text="Укажите дату оплаты",
     )
@@ -81,7 +81,7 @@ class UserPayment(models.Model):
     class Meta:
         verbose_name = ""
         verbose_name_plural = ""
-        ordering = ["user", "-date_payment"]
+        ordering = ["user", "-payment_date"]
 
     def __str__(self):
         return f"Payment for {self.user.email} - {self.payment}"

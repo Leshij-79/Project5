@@ -10,7 +10,7 @@ router = SimpleRouter()
 router.register("", UsersViewSet)
 
 urlpatterns = [
-    path("users/payments/", UserPaymentListAPIView.as_view(), name="payments_list"),
+    path("payments/", UserPaymentListAPIView.as_view(), name="payments_list"),
 ]
 
 urlpatterns += router.urls
