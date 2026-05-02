@@ -1,9 +1,9 @@
-from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.generics import ListAPIView
 from rest_framework.viewsets import ModelViewSet
 
 from users.models import CustomUser, UserPayment
-from users.serializers import UserSerializer, UserPaymentSerializer
+from users.serializers import UserPaymentSerializer, UserSerializer
 
 
 class UsersViewSet(ModelViewSet):
@@ -14,6 +14,13 @@ class UsersViewSet(ModelViewSet):
 class UserPaymentListAPIView(ListAPIView):
     queryset = UserPayment.objects.all()
     serializer_class = UserPaymentSerializer
-    filter_backends = (SearchFilter, OrderingFilter,)
-    search_fields = ('name',)
-    ordering_fields = ('payment_date',)
+    filter_backends = (
+        SearchFilter,
+        OrderingFilter,
+    )
+    search_fields = (
+        "payment_course__title",
+        "payment_lesson__title",
+        "payment_method",
+    )
+    ordering_fields = ("payment_date",)

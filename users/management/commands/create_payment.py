@@ -1,5 +1,3 @@
-from asyncio.windows_events import NULL
-
 from django.core.management import BaseCommand
 
 from lms.models import Course, Lesson
@@ -24,47 +22,53 @@ class Command(BaseCommand):
             self.stdout.write(self.style.ERROR(f"Ошибка при получении объектов: {e}"))
             return
         payments = [
-            {"user": user1,
-             "payment_date": "2026-01-14",
-             "payment_course": course1,
-             "payment_lesson": None,
-             "payment": 5000,
-             "payment_method": "cash"
+            {
+                "user": user1,
+                "payment_date": "2026-01-14",
+                "payment_course": course1,
+                "payment_lesson": None,
+                "payment": 5000,
+                "payment_method": "cash",
             },
-            {"user": user1,
-             "payment_date": "2026-02-14",
-             "payment_course": None,
-             "payment_lesson": lesson4,
-             "payment": 15000,
-             "payment_method": "transfer"
+            {
+                "user": user1,
+                "payment_date": "2026-02-14",
+                "payment_course": None,
+                "payment_lesson": lesson4,
+                "payment": 15000,
+                "payment_method": "transfer",
             },
-            {"user": user2,
-             "payment_date": "2026-03-14",
-             "payment_course": course2,
-             "payment_lesson": None,
-             "payment": 5000,
-             "payment_method": "cash"
+            {
+                "user": user2,
+                "payment_date": "2026-03-14",
+                "payment_course": course2,
+                "payment_lesson": None,
+                "payment": 5000,
+                "payment_method": "cash",
             },
-            {"user": user2,
-             "payment_date": "2026-04-14",
-             "payment_course":  None,
-             "payment_lesson": lesson6,
-             "payment": 25000,
-             "payment_method": "transfer"
+            {
+                "user": user2,
+                "payment_date": "2026-04-14",
+                "payment_course": None,
+                "payment_lesson": lesson6,
+                "payment": 25000,
+                "payment_method": "transfer",
             },
-            {"user": user3,
-             "payment_date": "2026-01-14",
-             "payment_course": course3,
-             "payment_lesson": None,
-             "payment": 5000,
-             "payment_method": "cash"
+            {
+                "user": user3,
+                "payment_date": "2026-01-14",
+                "payment_course": course3,
+                "payment_lesson": None,
+                "payment": 5000,
+                "payment_method": "cash",
             },
-            {"user": user3,
-             "payment_date": "2026-01-14",
-             "payment_course": None,
-             "payment_lesson": lesson3,
-             "payment": 5000,
-             "payment_method": "transfer"
+            {
+                "user": user3,
+                "payment_date": "2026-01-14",
+                "payment_course": None,
+                "payment_lesson": lesson3,
+                "payment": 5000,
+                "payment_method": "transfer",
             },
         ]
 

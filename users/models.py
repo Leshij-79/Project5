@@ -1,5 +1,3 @@
-from tabnanny import verbose
-
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
@@ -27,10 +25,7 @@ class CustomUser(AbstractUser):
 
 
 class UserPayment(models.Model):
-    METHOD_CHOICES = [
-        ("cash", "Наличные"),
-        ("transfer", "Перевод на счёт")
-    ]
+    METHOD_CHOICES = [("cash", "Наличные"), ("transfer", "Перевод на счёт")]
 
     user = models.ForeignKey(
         CustomUser,

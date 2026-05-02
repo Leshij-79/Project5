@@ -1,5 +1,11 @@
-from rest_framework.generics import CreateAPIView, DestroyAPIView, ListAPIView, RetrieveAPIView, UpdateAPIView, \
-    RetrieveUpdateAPIView
+from rest_framework.generics import (
+    CreateAPIView,
+    DestroyAPIView,
+    ListAPIView,
+    RetrieveAPIView,
+    RetrieveUpdateAPIView,
+    UpdateAPIView,
+)
 from rest_framework.viewsets import ModelViewSet
 
 from lms.models import Course, Lesson
