@@ -11,7 +11,7 @@ class LessonSerializer(ModelSerializer):
 
 
 class CourseSerializer(ModelSerializer):
-    count = serializers.SerializerMethodField()
+    count = serializers.SerializerMethodField(read_only=True)
     course = LessonSerializer(many=True, read_only=True)  # course <=> related_name="course"
 
     def get_count(self, obj):
