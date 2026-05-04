@@ -8,19 +8,6 @@ class Command(BaseCommand):
         group_name_moderator = "Moderator"
         group_moderator, created_moderator = Group.objects.get_or_create(name=group_name_moderator)
 
-        permissions = Permission.objects.filter(
-            codename__in=[
-                "can_block_user",
-                "can_view_user",
-                "can_view_message",
-                "can_moderated_mailing",
-                "can_view_mailing",
-                "can_view_recipient",
-            ],
-        )
-
-        group_moderator.permissions.set(permissions)
-
         if created_moderator:
             self.stdout.write(self.style.SUCCESS(f'Группа "{group_name_moderator}" создана'))
 
