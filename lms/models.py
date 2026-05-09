@@ -1,5 +1,7 @@
 from django.db import models
 
+from users.models import CustomUser
+
 
 class Course(models.Model):
     title = models.CharField(
@@ -25,9 +27,19 @@ class Course(models.Model):
         help_text="Введите описание курса",
     )
 
+    owner = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="course_owner",
+        verbose_name="Владелец курса",
+        help_text="Владелец курса",
+    )
+
     class Meta:
         verbose_name = "Курс"
-        verbose_name_plural = ("Курсы",)
+        verbose_name_plural = "Курсы"
         ordering = ["title"]
 
     def __str__(self):
@@ -72,9 +84,19 @@ class Lesson(models.Model):
         help_text="Укажите курс урока",
     )
 
+    owner = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="lesson_owner",
+        verbose_name="Владелец урока",
+        help_text="Владелец урока",
+    )
+
     class Meta:
         verbose_name = "Урок"
-        verbose_name_plural = ("Уроки",)
+        verbose_name_plural = "Уроки"
         ordering = ["title"]
 
     def __str__(self):

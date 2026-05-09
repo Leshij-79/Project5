@@ -27,6 +27,8 @@ djangorestframework = "^3.17.1"
 pillow = "^12.2.0"
 djangorestframework-stubs = "^3.16.9"
 django-filter = "^25.2"
+djangorestframework-simplejwt = "^5.5.1"
+ipython = "^9.13.0"
 
 
 [build-system]

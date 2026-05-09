@@ -1,8 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-from lms.models import Course, Lesson
-
 
 class CustomUser(AbstractUser):
     email = models.EmailField(unique=True, verbose_name="email")
@@ -41,7 +39,7 @@ class UserPayment(models.Model):
     )
 
     payment_course = models.ForeignKey(
-        Course,
+        "lms.Course",
         on_delete=models.CASCADE,
         related_name="payment_course",
         blank=True,
@@ -51,7 +49,7 @@ class UserPayment(models.Model):
     )
 
     payment_lesson = models.ForeignKey(
-        Lesson,
+        "lms.Lesson",
         on_delete=models.CASCADE,
         related_name="payment_lesson",
         blank=True,
