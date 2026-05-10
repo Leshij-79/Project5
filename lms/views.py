@@ -1,6 +1,3 @@
-from django.contrib import messages
-from icecream import ic
-from rest_framework import status
 from rest_framework.generics import (CreateAPIView, DestroyAPIView, ListAPIView, RetrieveAPIView,
                                      RetrieveUpdateAPIView, UpdateAPIView)
 from rest_framework.permissions import IsAuthenticated
@@ -11,7 +8,7 @@ from rest_framework.viewsets import ModelViewSet
 from lms.models import Course, Lesson, Subscriptions
 from lms.paginators import PagePagination
 from lms.serializers import CourseSerializer, LessonSerializer, SubscriptionsSerializer
-from users.permissions import IsModerator, IsOwner
+from users.permissions import IsModerator, IsOwner, IsNotModerator
 
 
 class CourseViewSet(ModelViewSet):
@@ -21,8 +18,8 @@ class CourseViewSet(ModelViewSet):
 
     # def get_serializer_class(self):
     #     pass
-    # if self.action == 'retrieve':
-    #     return CourseDetailSerializer
+    #     if self.action == 'retrieve':
+    #         return CourseDetailSerializer
     # return CourseSerializer
 
     def perform_create(self, serializer):
@@ -42,13 +39,13 @@ class CourseViewSet(ModelViewSet):
         if self.action == "create":
             self.permission_classes = (
                 IsAuthenticated,
-                ~IsModerator,
+                IsNotModerator,
             )
         elif self.action == "destroy":
             self.permission_classes = (
                 IsAuthenticated,
-                ~IsModerator,
                 IsOwner,
+                IsNotModerator,
             )
         elif self.action in ["retrieve", "update", "list"]:
             self.permission_classes = (
@@ -63,7 +60,7 @@ class LessonCreateAPIView(CreateAPIView):
     serializer_class = LessonSerializer
     permission_classes = (
         IsAuthenticated,
-        ~IsModerator,
+        IsNotModerator,
     )
 
     def perform_create(self, serializer):
@@ -110,7 +107,7 @@ class LessonRetrieveUpdateAPIView(RetrieveUpdateAPIView):
 class LessonDestroyAPIView(DestroyAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
-    permission_classes = (IsAuthenticated, IsOwner, ~IsModerator)
+    permission_classes = (IsAuthenticated, IsOwner, IsNotModerator)
 
 
 class SubscriptionsAPIView(APIView):
@@ -118,7 +115,7 @@ class SubscriptionsAPIView(APIView):
 
     def post(self, request, *args, **kwargs):
         user = request.user
-        course_id = kwargs['pk']
+        course_id = kwargs["pk"]
 
         course = Course.objects.get(id=course_id)
         subscription = Subscriptions.objects.filter(user=user, course=course)

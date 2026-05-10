@@ -17,13 +17,13 @@ class LessonSerializer(ModelSerializer):
 class CourseSerializer(ModelSerializer):
     count = serializers.SerializerMethodField(read_only=True)
     course = LessonSerializer(many=True, read_only=True)  # course <=> related_name="course"
-    subscription = serializers.SerializerMethodField(read_only=True)
+    subs_course = serializers.SerializerMethodField(read_only=True)  # subs_course <=> related_name="subs_course"
 
     def get_count(self, obj):
         return obj.course.count()
 
-    def get_subscription(self, obj):
-        return obj.subscription.count()
+    def get_subs_course(self, obj):
+        return obj.subs_course.count()
 
     class Meta:
         model = Course
