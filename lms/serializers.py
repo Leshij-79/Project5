@@ -6,7 +6,7 @@ from lms.validators import UrlLessonValidator
 
 
 class LessonSerializer(ModelSerializer):
-    url_video = serializers.URLField(validators=[UrlLessonValidator()])
+    url_video = serializers.URLField(validators=[UrlLessonValidator()], required=False)
 
     class Meta:
         model = Lesson

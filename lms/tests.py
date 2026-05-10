@@ -22,11 +22,13 @@ class CourseTestCase(APITestCase):
         self.course = Course.objects.create(
             title="testcourse",
             description="testcourse",
+            preview=None,
             owner=self.user
         )
         self.lesson = Lesson.objects.create(
             title="testlesson",
             description="testlesson",
+            preview=None,
             course=self.course,
             owner=self.user
         )
@@ -105,7 +107,7 @@ class CourseTestCase(APITestCase):
     def test_course_delete(self):
         """
         Тест на удаление курса
-        Удаялется первый курс
+        Удаляется первый курс
         :return:
         """
         url = reverse("lms:course-detail", kwargs={"pk": self.course.pk})
@@ -132,6 +134,29 @@ class CourseTestCase(APITestCase):
 
         response = self.client.get(url)
         data = response.json()
+        result = {
+            'count': 1,
+            'next': None,
+            'previous': None,
+            'results': [
+                {'count': 1,
+                 'course': [
+                     {'course': self.course.pk,
+                      'description': self.lesson.description,
+                      'id': self.lesson.pk,
+                      'owner': self.user.pk,
+                      'preview': None,
+                      'title': self.lesson.title,
+                      'url_video': None}
+                 ],
+                 'description': self.course.description,
+                 'id': self.course.pk,
+                 'owner': self.user.pk,
+                 'preview': None,
+                 'subs_course': 0,
+                 'title': self.course.title}
+            ]
+        }
 
         self.assertEqual(
             response.status_code,
@@ -143,27 +168,170 @@ class CourseTestCase(APITestCase):
             1
         )
 
+        self.assertEqual(
+            data,
+            result
+        )
 
-# class LessonTestCase(APITestCase):
-#
-#     def setUp(self):
-#         self.user = CustomUser.objects.create(
-#             username="testuser",
-#             email="testuser@testuser.ru",
-#             password="123"
-#         )
-#         self.course = Course.objects.create(
-#             title="testcourse",
-#             description="testcourse"
-#         )
-#         self.lesson = Lesson.objects.create(
-#             title="testlesson",
-#             description="testlesson",
-#             course=self.course,
-#             owner=self.user
-#         )
-#         self.client.force_authenticate(user=self.user)
-#
-#     def test_lesson_retrieve(self):
-#         url = reverse("lms:lesson-retrieve", kwargs={"pk": self.lesson.pk})
-#         lesson = Lesson.objects.create()
+
+class LessonTestCase(APITestCase):
+
+    def setUp(self):
+        """
+        Предварительные настройки теста
+        """
+
+        self.user = CustomUser.objects.create(
+            username="testuser",
+            email="testuser@testuser.ru",
+            password="123"
+        )
+        self.course = Course.objects.create(
+            title="testcourse",
+            description="testcourse",
+            preview=None,
+            owner=self.user
+        )
+        self.lesson = Lesson.objects.create(
+            title="testlesson",
+            description="testlesson",
+            preview=None,
+            course=self.course,
+            owner=self.user,
+        )
+        self.client.force_authenticate(user=self.user)
+
+    def test_lesson_retrieve(self):
+        """
+        Тест на просмотр урока
+        :return:
+        """
+
+        url = reverse("lms:lesson-retrieve", kwargs={"pk": self.lesson.pk})
+
+        response = self.client.get(url)
+        data = response.json()
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_200_OK
+        )
+
+        self.assertEqual(
+            data["title"],
+            self.lesson.title
+        )
+
+    def test_lesson_create(self):
+        """
+        Тест на создание урока
+        Создаётся второй урок
+        :return:
+        """
+
+        url = reverse("lms:lesson-create")
+        data = {
+            "title": "testlesson 2",
+            "description": "testlesson",
+            "course": self.course.pk,
+            "owner": self.user.pk,
+        }
+
+        response = self.client.post(url, data)
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_201_CREATED
+        )
+
+        self.assertEqual(
+            Lesson.objects.count(),
+            2
+        )
+
+    def test_lesson_update(self):
+        """
+        Тест на частичное обновление данных урока
+        Обновляется первый урок
+        :return:
+        """
+        url = reverse("lms:lesson-update", kwargs={"pk": self.lesson.pk})
+        data = data = {
+            "title": "testlesson 3",
+            "description": "testlesson"
+        }
+
+        response = self.client.patch(url)
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_200_OK
+        )
+
+        self.assertEqual(
+            data["title"],
+            "testlesson 3"
+        )
+
+    def test_lesson_delete(self):
+        """
+        Тест на удаление урока
+        Удаляется первый урок
+        :return:
+        """
+        url = reverse("lms:lesson-destroy", kwargs={"pk": self.course.pk})
+
+        response = self.client.delete(url)
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_204_NO_CONTENT
+        )
+
+        self.assertEqual(
+            Lesson.objects.count(),
+            0
+        )
+
+    def test_lesson_list(self):
+        """
+        Тест на список уроков
+        :return:
+        """
+
+        url = reverse("lms:lesson-list")
+
+        response = self.client.get(url)
+        data = response.json()
+
+        result = {
+            'count': 1,
+            'next': None,
+            'previous': None,
+            'results': [
+                {
+                    'course': 1,
+                    'description': 'testlesson',
+                    'id': 1,
+                    'owner': 1,
+                    'preview': None,
+                    'title': 'testlesson',
+                    'url_video': None
+                }
+            ]
+        }
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_200_OK
+        )
+
+        self.assertEqual(
+            data["count"],
+            1
+        )
+
+        self.assertEqual(
+            data,
+            result
+        )
