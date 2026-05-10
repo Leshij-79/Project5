@@ -1,3 +1,4 @@
+from rest_framework import status
 from rest_framework.generics import (CreateAPIView, DestroyAPIView, ListAPIView, RetrieveAPIView,
                                      RetrieveUpdateAPIView, UpdateAPIView)
 from rest_framework.permissions import IsAuthenticated
@@ -117,7 +118,11 @@ class SubscriptionsAPIView(APIView):
         user = request.user
         course_id = kwargs["pk"]
 
-        course = Course.objects.get(id=course_id)
+        try:
+            course = Course.objects.get(id=course_id)
+        except Course.DoesNotExist:
+            return Response({"error": "Курс не найден"}, status=status.HTTP_404_NOT_FOUND)
+
         subscription = Subscriptions.objects.filter(user=user, course=course)
 
         if subscription.exists():
