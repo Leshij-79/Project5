@@ -9,6 +9,7 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
 from lms.models import Course, Lesson, Subscriptions
+from lms.paginators import PagePagination
 from lms.serializers import CourseSerializer, LessonSerializer, SubscriptionsSerializer
 from users.permissions import IsModerator, IsOwner
 
@@ -16,6 +17,7 @@ from users.permissions import IsModerator, IsOwner
 class CourseViewSet(ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
+    pagination_class = PagePagination
 
     # def get_serializer_class(self):
     #     pass
@@ -80,6 +82,7 @@ class LessonDetailAPIView(RetrieveAPIView):
 class LessonListAPIView(ListAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
+    pagination_class = PagePagination
     permission_classes = (
         IsAuthenticated,
         IsModerator | IsOwner,
