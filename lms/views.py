@@ -1,7 +1,10 @@
 from django.contrib import messages
+from icecream import ic
+from rest_framework import status
 from rest_framework.generics import (CreateAPIView, DestroyAPIView, ListAPIView, RetrieveAPIView,
                                      RetrieveUpdateAPIView, UpdateAPIView)
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
@@ -112,14 +115,39 @@ class SubscriptionsAPIView(APIView):
 
     def post(self, request, *args, **kwargs):
         user = request.user
-        course_id = request.data.get("course_id")
-        course = Course.objects.get(id=course_id)
+        course_id = kwargs['pk']
 
-        subscription = Subscriptions.objects.create(user=user, course=course)
+        course = Course.objects.get(id=course_id)
+        subscription = Subscriptions.objects.filter(user=user, course=course)
 
         if subscription.exists():
             subscription.delete()
-            messages.success(request, "Подписка успешно удалена")
+            message = "Подписка успешно удалена"
         else:
             Subscriptions.objects.create(user=user, course=course)
-            messages.success(request, "Подписка успешно добавлена")
+            message = "Подписка успешно добавлена"
+
+        return Response({"message": message})
+
+
+# На долгую память
+# class SubscriptionsAPIView(APIView):
+#     serializer_class = SubscriptionsSerializer
+#
+#     def post(self, request, *args, **kwargs):
+#         user = request.user
+#         course_id = request.data.get("course_id")
+#         course = Course.objects.get(id=course_id)
+#
+#         subscription = Subscriptions.objects.filter(user=user, course=course)
+#
+#         ic(subscription.exists())
+#
+#         if subscription.exists():
+#             subscription.delete()
+#             message = "Подписка успешно удалена"
+#         else:
+#             Subscriptions.objects.create(user=user, course=course)
+#             message = "Подписка успешно добавлена"
+#
+#         return Response({"message": message})

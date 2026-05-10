@@ -1,9 +1,7 @@
-from jedi.third_party.typeshed.stubs.braintree.braintree.subscription import Subscription
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 
 from lms.models import Course, Lesson, Subscriptions
-from users.serializers import UserSerializer
 
 
 class LessonSerializer(ModelSerializer):
