@@ -19,11 +19,10 @@ class IsOwner(permissions.BasePermission):
 class IsOwnerOrNotModerator(permissions.BasePermission):
     def has_permission(self, request, view):
         # Проверяем, есть ли объект (для destroy)
-        if view.action == 'destroy':
+        if view.action == "destroy":
             obj = view.get_object()
             # Разрешаем удаление если:
             # 1. Пользователь - владелец
             # 2. И пользователь НЕ модератор
-            return (obj.owner == request.user and
-                   not request.user.groups.filter(name="Moderator").exists())
+            return obj.owner == request.user and not request.user.groups.filter(name="Moderator").exists()
         return True

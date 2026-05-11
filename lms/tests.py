@@ -1,6 +1,5 @@
 from django.contrib.auth.models import Group
 from django.urls import reverse
-from icecream import ic
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -15,25 +14,14 @@ class CourseTestCase(APITestCase):
         Предварительные настройки теста
         """
 
-        self.user = CustomUser.objects.create(
-            username="testuser",
-            email="testuser@testuser.ru",
-            password="123"
-        )
+        self.user = CustomUser.objects.create(username="testuser", email="testuser@testuser.ru", password="123")
 
         self.course = Course.objects.create(
-            title="testcourse",
-            description="testcourse",
-            preview=None,
-            owner=self.user
+            title="testcourse", description="testcourse", preview=None, owner=self.user
         )
 
         self.lesson = Lesson.objects.create(
-            title="testlesson",
-            description="testlesson",
-            preview=None,
-            course=self.course,
-            owner=self.user
+            title="testlesson", description="testlesson", preview=None, course=self.course, owner=self.user
         )
 
         self.client.force_authenticate(user=self.user)
@@ -49,15 +37,9 @@ class CourseTestCase(APITestCase):
         response = self.client.get(url)
         data = response.json()
 
-        self.assertEqual(
-            response.status_code,
-            status.HTTP_200_OK
-        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        self.assertEqual(
-            data["title"],
-            self.course.title
-        )
+        self.assertEqual(data["title"], self.course.title)
 
     def test_course_create(self):
         """
@@ -67,22 +49,13 @@ class CourseTestCase(APITestCase):
         """
 
         url = reverse("lms:course-list")
-        data = {
-            "title": "testcourse 2",
-            "description": "testcourse"
-        }
+        data = {"title": "testcourse 2", "description": "testcourse"}
 
         response = self.client.post(url, data)
 
-        self.assertEqual(
-            response.status_code,
-            status.HTTP_201_CREATED
-        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        self.assertEqual(
-            Course.objects.count(),
-            2
-        )
+        self.assertEqual(Course.objects.count(), 2)
 
     def test_course_update(self):
         """
@@ -91,22 +64,13 @@ class CourseTestCase(APITestCase):
         :return:
         """
         url = reverse("lms:course-detail", kwargs={"pk": self.course.pk})
-        data = data = {
-            "title": "testcourse 3",
-            "description": "testcourse"
-        }
+        data = data = {"title": "testcourse 3", "description": "testcourse"}
 
         response = self.client.patch(url)
 
-        self.assertEqual(
-            response.status_code,
-            status.HTTP_200_OK
-        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        self.assertEqual(
-            data["title"],
-            "testcourse 3"
-        )
+        self.assertEqual(data["title"], "testcourse 3")
 
     def test_course_delete(self):
         """
@@ -118,15 +82,9 @@ class CourseTestCase(APITestCase):
 
         response = self.client.delete(url)
 
-        self.assertEqual(
-            response.status_code,
-            status.HTTP_204_NO_CONTENT
-        )
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
-        self.assertEqual(
-            Course.objects.count(),
-            0
-        )
+        self.assertEqual(Course.objects.count(), 0)
 
     def test_course_list(self):
         """
@@ -139,43 +97,38 @@ class CourseTestCase(APITestCase):
         response = self.client.get(url)
         data = response.json()
         result = {
-            'count': 1,
-            'next': None,
-            'previous': None,
-            'results': [
-                {'count': 1,
-                 'course': [
-                     {'course': self.course.pk,
-                      'description': self.lesson.description,
-                      'id': self.lesson.pk,
-                      'owner': self.user.pk,
-                      'preview': None,
-                      'title': self.lesson.title,
-                      'url_video': None}
-                 ],
-                 'description': self.course.description,
-                 'id': self.course.pk,
-                 'owner': self.user.pk,
-                 'preview': None,
-                 'subs_course': 0,
-                 'title': self.course.title}
-            ]
+            "count": 1,
+            "next": None,
+            "previous": None,
+            "results": [
+                {
+                    "count": 1,
+                    "course": [
+                        {
+                            "course": self.course.pk,
+                            "description": self.lesson.description,
+                            "id": self.lesson.pk,
+                            "owner": self.user.pk,
+                            "preview": None,
+                            "title": self.lesson.title,
+                            "url_video": None,
+                        }
+                    ],
+                    "description": self.course.description,
+                    "id": self.course.pk,
+                    "owner": self.user.pk,
+                    "preview": None,
+                    "subs_course": 0,
+                    "title": self.course.title,
+                }
+            ],
         }
 
-        self.assertEqual(
-            response.status_code,
-            status.HTTP_200_OK
-        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        self.assertEqual(
-            data["count"],
-            1
-        )
+        self.assertEqual(data["count"], 1)
 
-        self.assertEqual(
-            data,
-            result
-        )
+        self.assertEqual(data, result)
 
 
 class LessonTestCase(APITestCase):
@@ -185,16 +138,9 @@ class LessonTestCase(APITestCase):
         Предварительные настройки теста
         """
 
-        self.user = CustomUser.objects.create(
-            username="testuser",
-            email="testuser@testuser.ru",
-            password="123"
-        )
+        self.user = CustomUser.objects.create(username="testuser", email="testuser@testuser.ru", password="123")
         self.course = Course.objects.create(
-            title="testcourse",
-            description="testcourse",
-            preview=None,
-            owner=self.user
+            title="testcourse", description="testcourse", preview=None, owner=self.user
         )
         self.lesson = Lesson.objects.create(
             title="testlesson",
@@ -216,15 +162,9 @@ class LessonTestCase(APITestCase):
         response = self.client.get(url)
         data = response.json()
 
-        self.assertEqual(
-            response.status_code,
-            status.HTTP_200_OK
-        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        self.assertEqual(
-            data["title"],
-            self.lesson.title
-        )
+        self.assertEqual(data["title"], self.lesson.title)
 
     def test_lesson_create(self):
         """
@@ -243,15 +183,9 @@ class LessonTestCase(APITestCase):
 
         response = self.client.post(url, data)
 
-        self.assertEqual(
-            response.status_code,
-            status.HTTP_201_CREATED
-        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        self.assertEqual(
-            Lesson.objects.count(),
-            2
-        )
+        self.assertEqual(Lesson.objects.count(), 2)
 
     def test_lesson_update(self):
         """
@@ -260,22 +194,13 @@ class LessonTestCase(APITestCase):
         :return:
         """
         url = reverse("lms:lesson-update", kwargs={"pk": self.lesson.pk})
-        data = data = {
-            "title": "testlesson 3",
-            "description": "testlesson"
-        }
+        data = data = {"title": "testlesson 3", "description": "testlesson"}
 
         response = self.client.patch(url)
 
-        self.assertEqual(
-            response.status_code,
-            status.HTTP_200_OK
-        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        self.assertEqual(
-            data["title"],
-            "testlesson 3"
-        )
+        self.assertEqual(data["title"], "testlesson 3")
 
     def test_lesson_delete(self):
         """
@@ -287,15 +212,9 @@ class LessonTestCase(APITestCase):
 
         response = self.client.delete(url)
 
-        self.assertEqual(
-            response.status_code,
-            status.HTTP_204_NO_CONTENT
-        )
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
-        self.assertEqual(
-            Lesson.objects.count(),
-            0
-        )
+        self.assertEqual(Lesson.objects.count(), 0)
 
     def test_lesson_list(self):
         """
@@ -309,36 +228,27 @@ class LessonTestCase(APITestCase):
         data = response.json()
 
         result = {
-            'count': 1,
-            'next': None,
-            'previous': None,
-            'results': [
+            "count": 1,
+            "next": None,
+            "previous": None,
+            "results": [
                 {
-                    'course': self.course.pk,
-                    'description': self.lesson.description,
-                    'id': self.lesson.pk,
-                    'owner': self.user.pk,
-                    'preview': None,
-                    'title': self.lesson.title,
-                    'url_video': None
+                    "course": self.course.pk,
+                    "description": self.lesson.description,
+                    "id": self.lesson.pk,
+                    "owner": self.user.pk,
+                    "preview": None,
+                    "title": self.lesson.title,
+                    "url_video": None,
                 }
-            ]
+            ],
         }
 
-        self.assertEqual(
-            response.status_code,
-            status.HTTP_200_OK
-        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        self.assertEqual(
-            data["count"],
-            1
-        )
+        self.assertEqual(data["count"], 1)
 
-        self.assertEqual(
-            data,
-            result
-        )
+        self.assertEqual(data, result)
 
 
 class CourseModeratorTestCase(APITestCase):
@@ -348,27 +258,16 @@ class CourseModeratorTestCase(APITestCase):
         Предварительные настройки теста
         """
 
-        self.user = CustomUser.objects.create(
-            username="testuser",
-            email="testuser@testuser.ru",
-            password="123"
-        )
-        group, created = Group.objects.get_or_create(name='Moderator')
+        self.user = CustomUser.objects.create(username="testuser", email="testuser@testuser.ru", password="123")
+        group, created = Group.objects.get_or_create(name="Moderator")
         self.user.groups.add(group)
 
         self.course = Course.objects.create(
-            title="testcourse",
-            description="testcourse",
-            preview=None,
-            owner=self.user
+            title="testcourse", description="testcourse", preview=None, owner=self.user
         )
 
         self.lesson = Lesson.objects.create(
-            title="testlesson",
-            description="testlesson",
-            preview=None,
-            course=self.course,
-            owner=self.user
+            title="testlesson", description="testlesson", preview=None, course=self.course, owner=self.user
         )
 
         self.client.force_authenticate(user=self.user)
@@ -384,15 +283,9 @@ class CourseModeratorTestCase(APITestCase):
         response = self.client.get(url)
         data = response.json()
 
-        self.assertEqual(
-            response.status_code,
-            status.HTTP_200_OK
-        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        self.assertEqual(
-            data["title"],
-            self.course.title
-        )
+        self.assertEqual(data["title"], self.course.title)
 
     def test_course_create(self):
         """
@@ -402,17 +295,11 @@ class CourseModeratorTestCase(APITestCase):
         """
 
         url = reverse("lms:course-list")
-        data = {
-            "title": "testcourse 2",
-            "description": "testcourse"
-        }
+        data = {"title": "testcourse 2", "description": "testcourse"}
 
         response = self.client.post(url, data)
 
-        self.assertEqual(
-            response.status_code,
-            status.HTTP_403_FORBIDDEN
-        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_course_update(self):
         """
@@ -421,22 +308,13 @@ class CourseModeratorTestCase(APITestCase):
         :return:
         """
         url = reverse("lms:course-detail", kwargs={"pk": self.course.pk})
-        data = data = {
-            "title": "testcourse 3",
-            "description": "testcourse"
-        }
+        data = data = {"title": "testcourse 3", "description": "testcourse"}
 
         response = self.client.patch(url)
 
-        self.assertEqual(
-            response.status_code,
-            status.HTTP_200_OK
-        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        self.assertEqual(
-            data["title"],
-            "testcourse 3"
-        )
+        self.assertEqual(data["title"], "testcourse 3")
 
     def test_course_delete(self):
         """
@@ -448,10 +326,7 @@ class CourseModeratorTestCase(APITestCase):
 
         response = self.client.delete(url)
 
-        self.assertEqual(
-            response.status_code,
-            status.HTTP_403_FORBIDDEN
-        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_course_list(self):
         """
@@ -464,43 +339,38 @@ class CourseModeratorTestCase(APITestCase):
         response = self.client.get(url)
         data = response.json()
         result = {
-            'count': 1,
-            'next': None,
-            'previous': None,
-            'results': [
-                {'count': 1,
-                 'course': [
-                     {'course': self.course.pk,
-                      'description': self.lesson.description,
-                      'id': self.lesson.pk,
-                      'owner': self.user.pk,
-                      'preview': None,
-                      'title': self.lesson.title,
-                      'url_video': None}
-                 ],
-                 'description': self.course.description,
-                 'id': self.course.pk,
-                 'owner': self.user.pk,
-                 'preview': None,
-                 'subs_course': 0,
-                 'title': self.course.title}
-            ]
+            "count": 1,
+            "next": None,
+            "previous": None,
+            "results": [
+                {
+                    "count": 1,
+                    "course": [
+                        {
+                            "course": self.course.pk,
+                            "description": self.lesson.description,
+                            "id": self.lesson.pk,
+                            "owner": self.user.pk,
+                            "preview": None,
+                            "title": self.lesson.title,
+                            "url_video": None,
+                        }
+                    ],
+                    "description": self.course.description,
+                    "id": self.course.pk,
+                    "owner": self.user.pk,
+                    "preview": None,
+                    "subs_course": 0,
+                    "title": self.course.title,
+                }
+            ],
         }
 
-        self.assertEqual(
-            response.status_code,
-            status.HTTP_200_OK
-        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        self.assertEqual(
-            data["count"],
-            1
-        )
+        self.assertEqual(data["count"], 1)
 
-        self.assertEqual(
-            data,
-            result
-        )
+        self.assertEqual(data, result)
 
 
 class LessonModeratorTestCase(APITestCase):
@@ -510,19 +380,12 @@ class LessonModeratorTestCase(APITestCase):
         Предварительные настройки теста
         """
 
-        self.user = CustomUser.objects.create(
-            username="testuser",
-            email="testuser@testuser.ru",
-            password="123"
-        )
-        group, created = Group.objects.get_or_create(name='Moderator')
+        self.user = CustomUser.objects.create(username="testuser", email="testuser@testuser.ru", password="123")
+        group, created = Group.objects.get_or_create(name="Moderator")
         self.user.groups.add(group)
 
         self.course = Course.objects.create(
-            title="testcourse",
-            description="testcourse",
-            preview=None,
-            owner=self.user
+            title="testcourse", description="testcourse", preview=None, owner=self.user
         )
 
         self.lesson = Lesson.objects.create(
@@ -546,15 +409,9 @@ class LessonModeratorTestCase(APITestCase):
         response = self.client.get(url)
         data = response.json()
 
-        self.assertEqual(
-            response.status_code,
-            status.HTTP_200_OK
-        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        self.assertEqual(
-            data["title"],
-            self.lesson.title
-        )
+        self.assertEqual(data["title"], self.lesson.title)
 
     def test_lesson_create(self):
         """
@@ -573,10 +430,7 @@ class LessonModeratorTestCase(APITestCase):
 
         response = self.client.post(url, data)
 
-        self.assertEqual(
-            response.status_code,
-            status.HTTP_403_FORBIDDEN
-        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_lesson_update(self):
         """
@@ -585,22 +439,13 @@ class LessonModeratorTestCase(APITestCase):
         :return:
         """
         url = reverse("lms:lesson-update", kwargs={"pk": self.lesson.pk})
-        data = data = {
-            "title": "testlesson 3",
-            "description": "testlesson"
-        }
+        data = data = {"title": "testlesson 3", "description": "testlesson"}
 
         response = self.client.patch(url)
 
-        self.assertEqual(
-            response.status_code,
-            status.HTTP_200_OK
-        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        self.assertEqual(
-            data["title"],
-            "testlesson 3"
-        )
+        self.assertEqual(data["title"], "testlesson 3")
 
     def test_lesson_delete(self):
         """
@@ -612,10 +457,7 @@ class LessonModeratorTestCase(APITestCase):
 
         response = self.client.delete(url)
 
-        self.assertEqual(
-            response.status_code,
-            status.HTTP_403_FORBIDDEN
-        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_lesson_list(self):
         """
@@ -629,36 +471,27 @@ class LessonModeratorTestCase(APITestCase):
         data = response.json()
 
         result = {
-            'count': 1,
-            'next': None,
-            'previous': None,
-            'results': [
+            "count": 1,
+            "next": None,
+            "previous": None,
+            "results": [
                 {
-                    'course': self.course.pk,
-                    'description': self.lesson.description,
-                    'id': self.lesson.pk,
-                    'owner': self.user.pk,
-                    'preview': None,
-                    'title': self.lesson.title,
-                    'url_video': None
+                    "course": self.course.pk,
+                    "description": self.lesson.description,
+                    "id": self.lesson.pk,
+                    "owner": self.user.pk,
+                    "preview": None,
+                    "title": self.lesson.title,
+                    "url_video": None,
                 }
-            ]
+            ],
         }
 
-        self.assertEqual(
-            response.status_code,
-            status.HTTP_200_OK
-        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        self.assertEqual(
-            data["count"],
-            1
-        )
+        self.assertEqual(data["count"], 1)
 
-        self.assertEqual(
-            data,
-            result
-        )
+        self.assertEqual(data, result)
 
 
 class SubscriptionsTestCase(APITestCase):
@@ -668,17 +501,10 @@ class SubscriptionsTestCase(APITestCase):
         Предварительные настройки теста
         """
 
-        self.user = CustomUser.objects.create(
-            username="testuser",
-            email="testuser@testuser.ru",
-            password="123"
-        )
+        self.user = CustomUser.objects.create(username="testuser", email="testuser@testuser.ru", password="123")
 
         self.course = Course.objects.create(
-            title="testcourse",
-            description="testcourse",
-            preview=None,
-            owner=self.user
+            title="testcourse", description="testcourse", preview=None, owner=self.user
         )
 
         self.client.force_authenticate(user=self.user)
@@ -693,24 +519,12 @@ class SubscriptionsTestCase(APITestCase):
 
         response = self.client.post(url)
 
-        self.assertEqual(
-            response.status_code,
-            status.HTTP_200_OK
-        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        self.assertEqual(
-            Subscriptions.objects.count(),
-            1
-        )
+        self.assertEqual(Subscriptions.objects.count(), 1)
 
         response = self.client.post(url)
 
-        self.assertEqual(
-            response.status_code,
-            status.HTTP_200_OK
-        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        self.assertEqual(
-            Subscriptions.objects.count(),
-            0
-        )
+        self.assertEqual(Subscriptions.objects.count(), 0)

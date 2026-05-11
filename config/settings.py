@@ -23,7 +23,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "drf_spectacular",
-    'drf_yasg',
+    "drf_yasg",
+    "corsheaders",
     "django_filters",
     "rest_framework_simplejwt",
     "lms",
@@ -38,6 +39,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -116,8 +118,18 @@ SIMPLE_JWT = {
 }
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'API Documentation', # Заголовок для документации
-    'DESCRIPTION': 'Описание вашего API', # Описание (опционально)
-    'VERSION': '1.0.0', # Версия вашего API
-    'SERVE_INCLUDE_SCHEMA': False, # Не показывать сырую схему OpenAPI на главной странице (опционально)
+    "TITLE": "API Documentation",  # Заголовок для документации
+    "DESCRIPTION": "Описание вашего API",  # Описание (опционально)
+    "VERSION": "1.0.0",  # Версия вашего API
+    "SERVE_INCLUDE_SCHEMA": False,  # Не показывать сырую схему OpenAPI на главной странице (опционально)
 }
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8000",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:8000",
+]
+
+CORS_ALLOW_ALL_ORIGINS = False

@@ -1,6 +1,12 @@
 from rest_framework import status
-from rest_framework.generics import (CreateAPIView, DestroyAPIView, ListAPIView, RetrieveAPIView,
-                                     RetrieveUpdateAPIView, UpdateAPIView)
+from rest_framework.generics import (
+    CreateAPIView,
+    DestroyAPIView,
+    ListAPIView,
+    RetrieveAPIView,
+    RetrieveUpdateAPIView,
+    UpdateAPIView,
+)
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -9,7 +15,7 @@ from rest_framework.viewsets import ModelViewSet
 from lms.models import Course, Lesson, Subscriptions
 from lms.paginators import PagePagination
 from lms.serializers import CourseSerializer, LessonSerializer, SubscriptionsSerializer
-from users.permissions import IsModerator, IsOwner, IsNotModerator
+from users.permissions import IsModerator, IsNotModerator, IsOwner
 
 
 class CourseViewSet(ModelViewSet):
