@@ -1,4 +1,5 @@
-from rest_framework import serializers
+from icecream import ic
+from rest_framework import serializers, request
 from rest_framework.serializers import ModelSerializer
 
 from lms.models import Course, Lesson, Subscriptions
@@ -23,7 +24,11 @@ class CourseSerializer(ModelSerializer):
         return obj.course.count()
 
     def get_subs_course(self, obj):
-        return obj.subs_course.count()
+        request = self.context.get("request")
+
+        if request and request.user.is_authenticated:
+            return obj.subs_course.filter(course=obj, user=request.user).count()
+        return 0
 
     class Meta:
         model = Course

@@ -23,6 +23,11 @@ class CourseViewSet(ModelViewSet):
     serializer_class = CourseSerializer
     pagination_class = PagePagination
 
+    # def get_serializer_context(self):
+    #     context = super().get_serializer_context()
+    #     context.update({'request': self.request})
+    #     return context
+
     # def get_serializer_class(self):
     #     pass
     #     if self.action == 'retrieve':

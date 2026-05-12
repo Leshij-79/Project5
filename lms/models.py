@@ -123,8 +123,6 @@ class Subscriptions(models.Model):
     user = models.ForeignKey(
         CustomUser,
         on_delete=models.CASCADE,
-        blank=True,
-        null=True,
         related_name="subs_user",
         verbose_name="Пользователь",
         help_text="Пользователь",
