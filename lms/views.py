@@ -201,6 +201,10 @@ class CoursePaymentCreateAPIView(CreateAPIView):
         price = create_stripe_price(course.price, product_id)
         session_id, session_url = create_stripe_session(price)
 
+        ic(session_id)
+        ic(session_url)
+        ic(price)
+
         payment = CoursePayment.objects.create(
             user=user,
             course=course,
