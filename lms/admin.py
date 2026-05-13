@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from lms.models import Course, Lesson, Subscriptions
+from lms.models import Course, Lesson, Subscriptions, CoursePayment
 
 
 @admin.register(Course)
@@ -35,3 +35,21 @@ class SubscriptionsAdmin(admin.ModelAdmin):
     )
     list_filter = ("course",)
     search_fields = ["user", "course"]
+
+
+@admin.register(CoursePayment)
+class CoursePaymentAdmin(admin.ModelAdmin):
+    list_display = (
+        "course",
+        "user",
+        "amount",
+        "session_id",
+        "link",
+        "status",
+    )
+    list_filter = (
+        "course",
+        "user",
+        "status",
+    )
+    search_fields = ["course", "user", "status"]

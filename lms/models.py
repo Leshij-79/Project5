@@ -137,11 +137,11 @@ class Subscriptions(models.Model):
         return f"{self.course} {self.user}"
 
 
-class СoursePayment(models.Model):
+class CoursePayment(models.Model):
     STATUS_CHOICES = [
         ("open", "Оформление продолжается"),
         ("expired", "Срок оформления истек"),
-        ("complete", "Оформление заверешено"),
+        ("complete", "Оформление завершено"),
     ]
 
     course = models.ForeignKey(
@@ -191,6 +191,7 @@ class СoursePayment(models.Model):
         verbose_name="Статус оплаты",
         help_text="Укажите статус оплаты",
     )
+
 
     class Meta:
         verbose_name = "Оплата курса"

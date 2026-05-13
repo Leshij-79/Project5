@@ -2,7 +2,7 @@ from icecream import ic
 from rest_framework import serializers, request
 from rest_framework.serializers import ModelSerializer
 
-from lms.models import Course, Lesson, Subscriptions
+from lms.models import Course, Lesson, Subscriptions, CoursePayment
 from lms.validators import UrlLessonValidator
 
 
@@ -39,4 +39,11 @@ class SubscriptionsSerializer(ModelSerializer):
 
     class Meta:
         model = Subscriptions
+        fields = "__all__"
+
+
+class CoursePaymentSerializer(ModelSerializer):
+
+    class Meta:
+        model = CoursePayment
         fields = "__all__"

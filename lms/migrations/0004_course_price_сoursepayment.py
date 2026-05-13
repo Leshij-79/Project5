@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.CreateModel(
-            name="СoursePayment",
+            name="CoursePayment",
             fields=[
                 ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
                 ("amount", models.PositiveIntegerField(help_text="Укажите сумму оплаты", verbose_name="Сумма оплаты")),
