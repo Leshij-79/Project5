@@ -9,6 +9,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv()
 
 SECRET_KEY = os.getenv("SECRET_KEY")
+STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
 
 DEBUG = True
 
@@ -22,6 +23,9 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
+    "drf_spectacular",
+    "drf_yasg",
+    "corsheaders",
     "django_filters",
     "rest_framework_simplejwt",
     "lms",
@@ -36,6 +40,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -105,9 +110,27 @@ REST_FRAMEWORK = {
     "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
     "DEFAULT_AUTHENTICATION_CLASSES": ("rest_framework_simplejwt.authentication.JWTAuthentication",),
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
 }
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "API Documentation",  # Заголовок для документации
+    "DESCRIPTION": "Описание вашего API",  # Описание (опционально)
+    "VERSION": "1.0.0",  # Версия вашего API
+    "SERVE_INCLUDE_SCHEMA": False,  # Не показывать сырую схему OpenAPI на главной странице (опционально)
+}
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8000",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:8000",
+]
+
+CORS_ALLOW_ALL_ORIGINS = False

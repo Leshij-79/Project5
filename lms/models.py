@@ -37,6 +37,14 @@ class Course(models.Model):
         help_text="Владелец курса",
     )
 
+    price = models.PositiveIntegerField(
+        blank=True,
+        null=True,
+        verbose_name="Стоимость курса",
+        help_text="Укажите стоимость курса",
+        default=0,
+    )
+
     class Meta:
         verbose_name = "Курс"
         verbose_name_plural = "Курсы"
@@ -101,3 +109,94 @@ class Lesson(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class Subscriptions(models.Model):
+    course = models.ForeignKey(
+        Course,
+        on_delete=models.CASCADE,
+        related_name="subs_course",
+        verbose_name="Курс подписки",
+        help_text="Подписка на курс",
+    )
+
+    user = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name="subs_user",
+        verbose_name="Пользователь",
+        help_text="Пользователь",
+    )
+
+    class Meta:
+        verbose_name = "Подписка"
+        verbose_name_plural = "Подписки"
+        ordering = ["course", "user"]
+
+    def __str__(self):
+        return f"{self.course} {self.user}"
+
+
+class CoursePayment(models.Model):
+    STATUS_CHOICES = [
+        ("open", "Оформление продолжается"),
+        ("expired", "Срок оформления истек"),
+        ("complete", "Оформление завершено"),
+    ]
+
+    course = models.ForeignKey(
+        Course,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name="course_payment",
+        verbose_name="Оплачиваемый курс",
+        help_text="Укажите оплачиваемый курс",
+    )
+
+    user = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name="user_course_payment",
+        verbose_name="Плательщик",
+        help_text="Укажите плательщика",
+    )
+
+    amount = models.PositiveIntegerField(
+        verbose_name="Сумма оплаты",
+        help_text="Укажите сумму оплаты",
+    )
+
+    session_id = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        verbose_name="Id сессии",
+        help_text="Укажите id сессии",
+    )
+
+    link = models.URLField(
+        max_length=400,
+        blank=True,
+        null=True,
+        verbose_name="Ссылка на оплату",
+        help_text="Укажите ссылку на оплату",
+    )
+
+    status = models.CharField(
+        max_length=8,
+        choices=STATUS_CHOICES,
+        blank=True,
+        null=True,
+        verbose_name="Статус оплаты",
+        help_text="Укажите статус оплаты",
+    )
+
+
+    class Meta:
+        verbose_name = "Оплата курса"
+        verbose_name_plural = "Оплаты курсов"
+        ordering = ["course", "user"]
+
+    def __str__(self):
+        return f"{self.course} {self.user}"
