@@ -192,7 +192,6 @@ class CoursePayment(models.Model):
         help_text="Укажите статус оплаты",
     )
 
-
     class Meta:
         verbose_name = "Оплата курса"
         verbose_name_plural = "Оплаты курсов"

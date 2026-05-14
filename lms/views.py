@@ -1,24 +1,17 @@
-from icecream import ic
 from rest_framework import status
-from rest_framework.generics import (
-    CreateAPIView,
-    DestroyAPIView,
-    ListAPIView,
-    RetrieveAPIView,
-    RetrieveUpdateAPIView,
-    UpdateAPIView,
-)
+from rest_framework.generics import (CreateAPIView, DestroyAPIView, ListAPIView, RetrieveAPIView,
+                                     RetrieveUpdateAPIView, UpdateAPIView)
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
-from lms.models import Course, Lesson, Subscriptions, CoursePayment
+from lms.models import Course, CoursePayment, Lesson, Subscriptions
 from lms.paginators import PagePagination
-from lms.serializers import CourseSerializer, LessonSerializer, SubscriptionsSerializer, CoursePaymentSerializer
-from lms.services import create_stripe_products, create_stripe_price, create_stripe_session
+from lms.serializers import CoursePaymentSerializer, CourseSerializer, LessonSerializer, SubscriptionsSerializer
+from lms.services import (create_stripe_payment_status, create_stripe_price, create_stripe_products,
+                          create_stripe_session)
 from users.permissions import IsModerator, IsNotModerator, IsOwner
-
 
 
 class CourseViewSet(ModelViewSet):
@@ -175,9 +168,7 @@ class SubscriptionsAPIView(APIView):
 class CoursePaymentCreateAPIView(CreateAPIView):
     queryset = CoursePayment.objects.all()
     serializer_class = CoursePaymentSerializer
-    permission_classes = (
-        IsAuthenticated,
-    )
+    permission_classes = (IsAuthenticated,)
 
     def post(self, request, *args, **kwargs):
         user = request.user
@@ -192,18 +183,13 @@ class CoursePaymentCreateAPIView(CreateAPIView):
 
         if payment:
             return Response(
-                {"message": "Оплата по этому курсу уже существует",
-                 "payment_link": payment.link},
-                status=status.HTTP_400_BAD_REQUEST
+                {"message": "Оплата по этому курсу уже существует", "payment_link": payment.link},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         product_id, product_name = create_stripe_products(course)
         price = create_stripe_price(course.price, product_id)
         session_id, session_url = create_stripe_session(price)
-
-        ic(session_id)
-        ic(session_url)
-        ic(price)
 
         payment = CoursePayment.objects.create(
             user=user,
@@ -214,12 +200,35 @@ class CoursePaymentCreateAPIView(CreateAPIView):
             status="open",
         )
 
-        return Response({
-            "message": "Ссылка на оплату успешно создана",
-            "payment_link": session_url,
-            "payment_id": payment.id
-        }, status=status.HTTP_201_CREATED)
+        return Response(
+            {"message": "Ссылка на оплату успешно создана", "payment_link": session_url, "payment_id": payment.id},
+            status=status.HTTP_201_CREATED,
+        )
 
     # def perform_create(self, serializer):
     #     payment = serializer.save(user=self.request.user)
 
+
+class CoursePaymentStatusAPIView(APIView):
+    queryset = CoursePayment.objects.all()
+    serializer_class = CoursePaymentSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request, *args, **kwargs):
+        payment_id = kwargs["pk"]
+
+        try:
+            payment = CoursePayment.objects.get(id=payment_id)
+        except Course.DoesNotExist:
+            return Response({"error": "Оплата не найдена"}, status=status.HTTP_404_NOT_FOUND)
+
+        session_id = payment.session_id
+        status_payment = create_stripe_payment_status(session_id)
+
+        payment.status = status_payment
+        payment.save()
+
+        return Response(
+            {"message": "Cтатус оплаты успешно обновлен", "status": status_payment, "payment_id": payment.session_id},
+            status=status.HTTP_200_OK,
+        )
