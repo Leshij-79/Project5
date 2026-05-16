@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from lms.models import Course, Lesson, Subscriptions, CoursePayment
+from lms.models import Course, CoursePayment, Lesson, Subscriptions
 
 
 @admin.register(Course)
@@ -40,6 +40,7 @@ class SubscriptionsAdmin(admin.ModelAdmin):
 @admin.register(CoursePayment)
 class CoursePaymentAdmin(admin.ModelAdmin):
     list_display = (
+        "pk",
         "course",
         "user",
         "amount",

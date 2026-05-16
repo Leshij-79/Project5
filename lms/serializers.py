@@ -1,8 +1,7 @@
-from icecream import ic
-from rest_framework import serializers, request
+from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 
-from lms.models import Course, Lesson, Subscriptions, CoursePayment
+from lms.models import Course, CoursePayment, Lesson, Subscriptions
 from lms.validators import UrlLessonValidator
 
 

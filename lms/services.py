@@ -32,3 +32,11 @@ def create_stripe_session(price):
     )
 
     return session.id, session.url
+
+
+def create_stripe_payment_status(payment_id):
+    session = stripe.checkout.Session.retrieve(
+        payment_id,
+    )
+
+    return session.status

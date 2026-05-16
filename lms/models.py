@@ -168,7 +168,7 @@ class CoursePayment(models.Model):
     )
 
     session_id = models.CharField(
-        max_length=255,
+        max_length=500,
         blank=True,
         null=True,
         verbose_name="Id сессии",
@@ -176,11 +176,11 @@ class CoursePayment(models.Model):
     )
 
     link = models.URLField(
-        max_length=400,
+        max_length=600,
         blank=True,
         null=True,
-        verbose_name="Ссылка на оплату",
-        help_text="Укажите ссылку на оплату",
+        verbose_name="Ссылка на оплату курса",
+        help_text="Укажите ссылку на оплату курса",
     )
 
     status = models.CharField(
@@ -191,7 +191,6 @@ class CoursePayment(models.Model):
         verbose_name="Статус оплаты",
         help_text="Укажите статус оплаты",
     )
-
 
     class Meta:
         verbose_name = "Оплата курса"
