@@ -22,7 +22,6 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-
     "rest_framework",
     "drf_spectacular",
     "drf_yasg",
@@ -30,7 +29,6 @@ INSTALLED_APPS = [
     "django_filters",
     "rest_framework_simplejwt",
     "django_celery_beat",
-
     "lms",
     "users",
 ]
@@ -158,7 +156,7 @@ if CACHE_ENABLED:
     }
 
 # URL-адрес брокера сообщений
-CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL") # Например, Redis, который по умолчанию работает на порту 6379
+CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")  # Например, Redis, который по умолчанию работает на порту 6379
 
 # URL-адрес брокера результатов, также Redis
 CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND")
@@ -172,10 +170,10 @@ CELERY_TASK_TRACK_STARTED = True
 # Максимальное время на выполнение задачи
 CELERY_TASK_TIME_LIMIT = 30 * 60
 
-#TODO донастроить запуск периодической задачи
+# Настройка периодического запуска
 CELERY_BEAT_SCHEDULE = {
-    'task-name': {
-        'task': 'myapp.tasks.my_task',  # Путь к задаче
-        'schedule': timedelta(minutes=10),  # Расписание выполнения задачи (например, каждые 10 минут)
+    "deactivate_users": {
+        "task": "lms.tasks.deactivate_users",  # Путь к задаче
+        "schedule": timedelta(minutes=60),  # Расписание выполнения задачи (например, каждые 60 минут)
     },
 }

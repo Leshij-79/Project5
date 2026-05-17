@@ -1,28 +1,32 @@
+from datetime import timedelta
 from smtplib import SMTPException
 
 from celery import shared_task
 from django.core.mail import send_mail
-from icecream import ic
-from rest_framework.response import Response
+from django.utils import timezone
+
 
 from config import settings
 from lms.models import Subscriptions
+from users.models import CustomUser
 
 
 @shared_task
 def send_email_update(data):
-    mailing = Subscriptions.objects.filter(course=data['course']).all()
+    mailing = Subscriptions.objects.filter(course=data["course"]).all()
 
     result = []
 
     for mail_send in mailing:
         try:
             server_response = send_mail(
-                subject=f'Обновление курса {mail_send.course.title}',
-                message=f'Пользователь {mail_send.user.first_name} {mail_send.user.last_name} сообщаем, '
-                        f'что курс {mail_send.course.title} обновился',
+                subject=f"Обновление курса {mail_send.course.title}",
+                message=f"Пользователь {mail_send.user.first_name} {mail_send.user.last_name} сообщаем, "
+                f"что курс {mail_send.course.title} обновился",
                 from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[mail_send.user.email,],
+                recipient_list=[
+                    mail_send.user.email,
+                ],
             )
 
             if server_response == 1:
@@ -38,3 +42,11 @@ def send_email_update(data):
 
     return result
 
+
+@shared_task
+def deactivate_users():
+    threshold = timezone.now() - timedelta(days=30)
+
+    CustomUser.objects.filter(is_active=True, last_login__isnull=False, last_login__lt=threshold).update(
+        is_active=False
+    )

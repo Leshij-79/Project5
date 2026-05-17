@@ -44,5 +44,3 @@ class UserPaymentAdmin(admin.ModelAdmin):
         "payment",
     )
     list_filter = ("payment",)
-
-
