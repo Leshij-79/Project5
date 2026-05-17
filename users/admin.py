@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from users.models import CustomUser
+from users.models import CustomUser, UserPayment
 
 
 @admin.register(CustomUser)
@@ -26,7 +26,23 @@ class CustomUserAdmin(UserAdmin):
         "phone_number",
     )
     list_filter = ("email",)
-    search_fields = (
-        "username",
-        "email",
+
+
+@admin.register(UserPayment)
+class UserPaymentAdmin(admin.ModelAdmin):
+    list_display = (
+        "pk",
+        "user",
+        "payment_date",
+        "payment_course",
+        "payment_lesson",
+        "payment",
+        "payment_method",
     )
+    search_fields = (
+        "user",
+        "payment",
+    )
+    list_filter = ("payment",)
+
+
