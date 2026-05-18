@@ -72,8 +72,8 @@ class UserPayment(models.Model):
     )
 
     class Meta:
-        verbose_name = ""
-        verbose_name_plural = ""
+        verbose_name = "Оплата пользователя"
+        verbose_name_plural = "Оплаты пользователей"
         ordering = ["user", "-payment_date"]
 
     def __str__(self):

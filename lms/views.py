@@ -11,6 +11,7 @@ from lms.paginators import PagePagination
 from lms.serializers import CoursePaymentSerializer, CourseSerializer, LessonSerializer, SubscriptionsSerializer
 from lms.services import (create_stripe_payment_status, create_stripe_price, create_stripe_products,
                           create_stripe_session)
+from lms.tasks import send_email_update
 from users.permissions import IsModerator, IsNotModerator, IsOwner
 
 
@@ -73,6 +74,7 @@ class LessonCreateAPIView(CreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
+        send_email_update.delay(serializer.data)
 
 
 class LessonDetailAPIView(RetrieveAPIView):
@@ -102,6 +104,10 @@ class LessonUpdateAPIView(UpdateAPIView):
         IsModerator | IsOwner,
     )
 
+    def perform_update(self, serializer):
+        serializer.save()
+        send_email_update.delay(serializer.data)
+
 
 class LessonRetrieveUpdateAPIView(RetrieveUpdateAPIView):
     queryset = Lesson.objects.all()
@@ -116,6 +122,11 @@ class LessonDestroyAPIView(DestroyAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
     permission_classes = (IsAuthenticated, IsOwner, IsNotModerator)
+
+    def perform_destroy(self, instance):
+        data = LessonSerializer(instance).data
+        instance.delete()
+        send_email_update.delay(data)
 
 
 class SubscriptionsAPIView(APIView):
