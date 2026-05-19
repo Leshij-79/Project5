@@ -117,6 +117,10 @@ class LessonRetrieveUpdateAPIView(RetrieveUpdateAPIView):
         IsModerator | IsOwner,
     )
 
+    def perform_update(self, serializer):
+    serializer.save()
+    send_email_update.delay(serializer.data)
+
 
 class LessonDestroyAPIView(DestroyAPIView):
     queryset = Lesson.objects.all()
