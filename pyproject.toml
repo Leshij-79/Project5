@@ -39,6 +39,7 @@ celery = "^5.6.3"
 celery-types = "^0.26.0"
 django-celery-beat = "^2.9.0"
 eventlet = "^0.41.0"
+amqp = "^5.3.1"
 
 
 [build-system]
