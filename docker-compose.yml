@@ -56,7 +56,7 @@ services:
 
   celery:
     build: .
-    command: celery -A your_project_name worker --loglevel=info
+    command: celery -A config worker --loglevel=info
     env_file:
       - .env
     environment:
@@ -75,7 +75,7 @@ services:
 
   celery-beat:
     build: .
-    command: celery -A your_project_name beat --loglevel=info
+    command: celery -A config beat --loglevel=info
     env_file:
       - .env
     environment:
