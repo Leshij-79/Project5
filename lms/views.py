@@ -118,8 +118,8 @@ class LessonRetrieveUpdateAPIView(RetrieveUpdateAPIView):
     )
 
     def perform_update(self, serializer):
-    serializer.save()
-    send_email_update.delay(serializer.data)
+        serializer.save()
+        send_email_update.delay(serializer.data)
 
 
 class LessonDestroyAPIView(DestroyAPIView):
