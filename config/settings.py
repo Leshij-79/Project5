@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-load_dotenv()
+load_dotenv(dotenv_path=BASE_DIR / '.env', encoding='utf-8')
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
@@ -69,8 +69,8 @@ DATABASES = {
         "NAME": os.getenv("DB_NAME"),
         "USER": os.getenv("DB_USER"),
         "PASSWORD": os.getenv("PASSWORD"),
-        "HOST": os.getenv("DB_HOST"),
-        "PORT": os.getenv("PORT"),
+        "HOST": os.getenv("DB_HOST", "db"),
+        "PORT": os.getenv("PORT", "5432"),
     }
 }
 
@@ -151,7 +151,7 @@ if CACHE_ENABLED:
     CACHES = {
         "default": {
             "BACKEND": "django.core.cache.backends.redis.RedisCache",
-            "LOCATION": "redis://127.0.0.1:6379/1",
+            "LOCATION": "redis://redis:6379/1",
         }
     }
 
