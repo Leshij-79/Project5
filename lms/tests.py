@@ -118,6 +118,7 @@ class CourseTestCase(APITestCase):
                     "id": self.course.pk,
                     "owner": self.user.pk,
                     "preview": None,
+                    "price": 0,
                     "subs_course": 0,
                     "title": self.course.title,
                 }
@@ -360,6 +361,7 @@ class CourseModeratorTestCase(APITestCase):
                     "id": self.course.pk,
                     "owner": self.user.pk,
                     "preview": None,
+                    "price": 0,
                     "subs_course": 0,
                     "title": self.course.title,
                 }
