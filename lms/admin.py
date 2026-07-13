@@ -3,6 +3,7 @@ from django.contrib import admin
 from lms.models import Course, CoursePayment, Lesson, Subscriptions
 
 
+
 @admin.register(Course)
 class CourseAdmin(admin.ModelAdmin):
     list_display = (
