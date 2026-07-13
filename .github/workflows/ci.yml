@@ -41,6 +41,24 @@ jobs:
         python-version: '3.12'
         cache: 'pip'
 
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libpq-dev file
+
+    - name: Find problematic files
+      run: |
+        echo "=== Checking for binary files ==="
+        find . -type f -exec file {} \; | grep -E "binary|data|image|JPEG|PNG|GIF|PDF|ZIP" | grep -v ".git" || echo "No binary files found"
+        
+        echo "=== Checking for files with wrong encoding ==="
+        find . -name "*.py" -exec file {} \; | grep -v "ASCII\|UTF-8" || echo "No problematic Python files found"
+        
+        echo "=== Checking for .pyc files ==="
+        find . -name "*.pyc" -delete
+        find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+
+
     - name: Install Poetry
       run: pipx install poetry
 
