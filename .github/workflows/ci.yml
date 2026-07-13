@@ -55,8 +55,9 @@ jobs:
 
     - name: Install dependencies
       run: |
-        poetry install --no-interaction --verbose
+        poetry install --no-interaction --no-root
         poetry add psycopg2-binary --group dev
+        poetry run pip install -e .
 
     - name: Cache Poetry dependencies
       uses: actions/cache@v4
