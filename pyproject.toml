@@ -79,6 +79,7 @@ exclude = '''
     | \.mypy_cache
     | \.tox
     | \.venv
+    | \htmlcov
     | dist
   )/
   | foo.py           # Также отдельно исключить файл с именем foo.py

@@ -46,29 +46,6 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y libpq-dev file
 
-    - name: Find problematic files
-      run: |
-        echo "=== Checking for binary files ==="
-        find . -type f -exec file {} \; | grep -E "binary|data|image|JPEG|PNG|GIF|PDF|ZIP" | grep -v ".git" || echo "No binary files found"
-        
-        echo "=== Checking for files with wrong encoding ==="
-        find . -name "*.py" -exec file {} \; | grep -v "ASCII\|UTF-8" || echo "No problematic Python files found"
-        
-        echo "=== Checking for .pyc files ==="
-        find . -name "*.pyc" -delete
-        find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
-
-    - name: Clean up problematic files
-      run: |
-        echo "=== Removing binary files and cache ==="
-        rm -rf htmlcov/ 2>/dev/null || true
-        rm -rf .pytest_cache/ 2>/dev/null || true
-        rm -rf .coverage 2>/dev/null || true
-        rm -rf coverage.xml 2>/dev/null || true
-        find . -name "*.pyc" -delete
-        find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
-        echo "=== Cleanup complete ==="
-
     - name: Install Poetry
       run: pipx install poetry
 
