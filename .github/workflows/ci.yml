@@ -58,6 +58,16 @@ jobs:
         find . -name "*.pyc" -delete
         find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
 
+    - name: Clean up problematic files
+      run: |
+        echo "=== Removing binary files and cache ==="
+        rm -rf htmlcov/ 2>/dev/null || true
+        rm -rf .pytest_cache/ 2>/dev/null || true
+        rm -rf .coverage 2>/dev/null || true
+        rm -rf coverage.xml 2>/dev/null || true
+        find . -name "*.pyc" -delete
+        find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+        echo "=== Cleanup complete ==="
 
     - name: Install Poetry
       run: pipx install poetry
