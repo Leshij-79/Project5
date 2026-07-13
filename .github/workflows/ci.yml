@@ -51,6 +51,7 @@ jobs:
     - name: Install dependencies
       run: |
         poetry install --no-interaction
+        poetry add psycopg2-binary --group dev
 
     - name: Cache Poetry dependencies
       uses: actions/cache@v4
@@ -98,7 +99,16 @@ jobs:
         "
 
     - name: Run migrations
-      run: poetry run python manage.py migrate
+      run: |
+        poetry run python manage.py migrate --verbosity=3 || {
+          echo "Migration failed!"
+          poetry run python manage.py check
+          exit 1
+        }
 
     - name: Run tests
-      run: poetry run python manage.py test --verbosity=2
+      run: |
+        poetry run python manage.py test --verbosity=3 --traceback || {
+          echo "Tests failed!"
+          exit 1
+        }
