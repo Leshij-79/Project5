@@ -1,4 +1,5 @@
 name: Django CI
+
 on: [push, pull_request]
 
 jobs:
@@ -49,7 +50,6 @@ jobs:
 
     - name: Install dependencies
       run: |
-        poetry config virtualenvs.in-project true
         poetry install --no-interaction
 
     - name: Cache Poetry dependencies
@@ -60,7 +60,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-poetry-
 
-    - name: Create .env file for tests
+    - name: Set environment variables
       run: |
         echo "SECRET_KEY=django-insecure-ci-test-key" >> $GITHUB_ENV
         echo "STRIPE_SECRET_KEY=sk_test_ci_dummy_key" >> $GITHUB_ENV
@@ -76,13 +76,29 @@ jobs:
         echo "REDIS_HOST=localhost" >> $GITHUB_ENV
         echo "GITHUB_ACTIONS=true" >> $GITHUB_ENV
 
+    - name: Debug environment
+      run: |
+        echo "DB_NAME=$DB_NAME"
+        echo "DB_USER=$DB_USER"
+        echo "DB_HOST=$DB_HOST"
+
+    - name: Test database connection
+      run: |
+        poetry run python -c "
+        import psycopg2
+        conn = psycopg2.connect(
+            dbname='lms',
+            user='postgres',
+            password='postgres',
+            host='localhost',
+            port='5432'
+        )
+        print('Connection successful!')
+        conn.close()
+        "
+
     - name: Run migrations
-      env:
-        DATABASE_URL: postgres://postgres:postgres@localhost:5432/github_actions
       run: poetry run python manage.py migrate
 
     - name: Run tests
-      env:
-        DATABASE_URL: postgres://postgres:postgres@localhost:5432/github_actions
       run: poetry run python manage.py test --verbosity=2
-
