@@ -41,6 +41,7 @@ django-celery-beat = "^2.9.0"
 eventlet = "^0.41.0"
 amqp = "^5.3.1"
 psycopg2-binary = "^2.9.12"
+psycopg2 = "^2.9.12"
 
 
 [build-system]
