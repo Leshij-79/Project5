@@ -125,6 +125,7 @@ jobs:
       run: |
         ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
           cd ${{ secrets.DEPLOY_DIR }}
+          sudo dnf install -y postgresql-devel gcc python3.14-devel
           python3.14 -m venv venv
           source venv/bin/activate
           poetry env use python3.14
