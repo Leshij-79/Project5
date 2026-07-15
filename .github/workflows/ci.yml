@@ -111,6 +111,11 @@ jobs:
       with:
         ssh-private-key: ${{ secrets.SSH_KEY }}
 
+    - name: Debug SSH key format
+      run: |
+        echo "${{ secrets.SSH_KEY }}" | head -1
+        echo "${{ secrets.SSH_KEY }}" | tail -1
+
     - name: Copy project files to server
       run: |
         rsync -avz --exclude '__pycache__' . ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:${{ secrets.DEPLOY_DIR }}
