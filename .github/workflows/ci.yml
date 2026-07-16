@@ -140,6 +140,7 @@ jobs:
           pip install drf-spectacular
           pip install drf-yasg
           pip install django-cors-headers
+          pip install django-filter
           python manage.py migrate
           python manage.py collectstatic --noinput
           sudo systemctl restart myapp.service
