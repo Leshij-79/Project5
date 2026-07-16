@@ -146,6 +146,10 @@ jobs:
           pip install eventlet
           pip install django-celery-beat
           pip install dotenv
+          pip install stripe
+          mkdir -p staticfiles
+          export STATIC_ROOT=${{ secrets.DEPLOY_DIR }}/staticfiles
+          export DJANGO_SETTINGS_MODULE=config.settings
           python manage.py migrate
           python manage.py collectstatic --noinput
           sudo systemctl restart myapp.service
