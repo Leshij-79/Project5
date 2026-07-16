@@ -2,6 +2,7 @@
 name = "project5"
 version = "0.1.0"
 description = ""
+constraints = "constraints.txt"
 authors = ["Kuprin Aleksandr <freeman8901@yandex.ru>"]
 readme = "README.md"
 
