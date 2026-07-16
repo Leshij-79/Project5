@@ -131,7 +131,7 @@ jobs:
           python3.14 -m venv venv
           source venv/bin/activate
           python3.14 -m pip install --upgrade pip
-          pip install psycopg2
+          pip install psycopg2-binary
           poetry install --no-interaction --no-root
           
           python manage.py migrate
