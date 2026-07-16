@@ -147,7 +147,7 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
             cd ${{ secrets.DEPLOY_DIR }}
-            sudo chown -R $USER:$USER .
+            sudo chown -R ${{ secrets.SSH_USER }}:${{ secrets.SSH_USER }} .
             sudo chmod -R 755 .
             rm -rf venv
             python3.12 -m venv venv
