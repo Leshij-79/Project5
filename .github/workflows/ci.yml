@@ -125,8 +125,9 @@ jobs:
       run: |
         ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
           cd ${{ secrets.DEPLOY_DIR }}
+          sudo chown -R $USER:$USER venv
           sudo rm -rf venv
-          python3.14 -m venv venv
+          sudo python3.14 -m venv venv
           source venv/bin/activate
           pip install --upgrade pip
           pip install -r requirements.txt
