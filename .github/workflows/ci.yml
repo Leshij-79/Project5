@@ -143,7 +143,7 @@ jobs:
           pip install django-cors-headers
           pip install redis
           pip install celery
-          pip install enentlet
+          pip install eventlet
           pip install django-celery-beat
           pip install dotenv
           python manage.py migrate
