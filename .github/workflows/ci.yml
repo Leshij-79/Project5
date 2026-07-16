@@ -136,6 +136,7 @@ jobs:
           pip install django
           pip install celery
           pip install dotenv
+          pip install djangorestframework
           python manage.py migrate
           python manage.py collectstatic --noinput
           sudo systemctl restart myapp.service
