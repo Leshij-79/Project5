@@ -106,53 +106,81 @@ jobs:
     needs: test
 
     steps:
-    - name: Set up SSH
-      uses: webfactory/ssh-agent@v0.10.0
-      with:
-        ssh-private-key: ${{ secrets.SSH_KEY }}
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.10.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_KEY }}
 
-    - name: Add server to known_hosts
-      run: |
-        mkdir -p ~/.ssh
-        ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+      - name: Add server to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
 
+      # ДОБАВЬТЕ ЭТОТ ШАГ - проверка локальных файлов
+      - name: Debug - check local files
+        run: |
+          echo "=== CURRENT DIRECTORY ==="
+          pwd
+          echo "=== LISTING ALL FILES ==="
+          ls -la
+          echo "=== CHECKING KEY FILES ==="
+          [ -f manage.py ] && echo "✅ manage.py exists" || echo "❌ manage.py NOT found"
+          [ -f requirements.txt ] && echo "✅ requirements.txt exists" || echo "❌ requirements.txt NOT found"
+          [ -f pyproject.toml ] && echo "✅ pyproject.toml exists" || echo "❌ pyproject.toml NOT found"
+          echo "=== CHECKING DIRECTORIES ==="
+          [ -d config ] && echo "✅ config exists" || echo "❌ config NOT found"
+          [ -d lms ] && echo "✅ lms exists" || echo "❌ lms NOT found"
+          [ -d users ] && echo "✅ users exists" || echo "❌ users NOT found"
+          echo "=== FULL TREE ==="
+          find . -type f -name "*.py" | head -20
 
-    - name: Copy project files to server
-      run: |
-        rsync -avz --rsync-path="sudo rsync" --exclude '__pycache__' . ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:${{ secrets.DEPLOY_DIR }}
+      # ДОБАВЬТЕ ЭТОТ ШАГ - создание директории
+      - name: Create directory on server
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "sudo mkdir -p ${{ secrets.DEPLOY_DIR }} && sudo chown -R ${{ secrets.SSH_USER }}:${{ secrets.SSH_USER }} ${{ secrets.DEPLOY_DIR }}"
 
-    - name: Deploy application
-      run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-          cd ${{ secrets.DEPLOY_DIR }}
-          sudo chown -R ${{ secrets.SSH_USER }}:${{ secrets.SSH_USER }} .
-          sudo chmod -R 755 .
-          rm -rf venv
-          python3.14 -m venv venv
-          source venv/bin/activate
-          python3.14 -m pip install --upgrade pip
-          pip install psycopg2-binary
-          pip install -r requirements.txt
-          pip install django
-          pip install djangorestframework
-          pip install django-filter
-          pip install djangorestframework-simplejwt
-          pip install coverage
-          pip install drf-spectacular
-          pip install drf-yasg
-          pip install django-cors-headers
-          pip install redis
-          pip install celery
-          pip install eventlet
-          pip install django-celery-beat
-          pip install dotenv
-          pip install stripe
-          pip install pillow
-          mkdir -p staticfiles
-          export STATIC_ROOT=${{ secrets.DEPLOY_DIR }}/staticfiles
-          export DJANGO_SETTINGS_MODULE=config.settings
-          python manage.py migrate
-          python manage.py collectstatic --noinput
-          sudo systemctl restart myapp.service
-        EOF
+      - name: Copy project files to server
+        run: |
+          echo "=== STARTING RSYNC ==="
+          rsync -avzh --rsync-path="sudo rsync" \
+            --exclude '__pycache__' \
+            --exclude '.env' \
+            --exclude 'venv' \
+            --exclude '*.pyc' \
+            --exclude '.git' \
+            --exclude '.github' \
+            ./ ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:${{ secrets.DEPLOY_DIR }}
+          echo "=== RSYNC COMPLETED ==="
 
+      # ДОБАВЬТЕ ЭТОТ ШАГ - проверка на сервере
+      - name: Debug - check files on server
+        run: |
+          echo "=== FILES ON SERVER ==="
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "ls -la ${{ secrets.DEPLOY_DIR }}"
+          echo "=== CHECKING KEY FILES ON SERVER ==="
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "test -f ${{ secrets.DEPLOY_DIR }}/manage.py && echo '✅ manage.py exists on server' || echo '❌ manage.py NOT found on server'"
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "test -f ${{ secrets.DEPLOY_DIR }}/requirements.txt && echo '✅ requirements.txt exists on server' || echo '❌ requirements.txt NOT found on server'"
+
+      - name: Deploy application
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+            cd ${{ secrets.DEPLOY_DIR }}
+            echo "=== CURRENT DIRECTORY ==="
+            pwd
+            echo "=== FILES BEFORE DEPLOY ==="
+            ls -la
+          
+            sudo chown -R ${{ secrets.SSH_USER }}:${{ secrets.SSH_USER }} .
+            sudo chmod -R 755 .
+            rm -rf venv
+            python3.12 -m venv venv
+            source venv/bin/activate
+            pip install --upgrade pip
+            pip install -r requirements.txt
+            pip install pillow
+            mkdir -p staticfiles
+            export STATIC_ROOT=${{ secrets.DEPLOY_DIR }}/staticfiles
+            export DJANGO_SETTINGS_MODULE=config.settings
+            python manage.py migrate
+            python manage.py collectstatic --noinput
+          EOF
