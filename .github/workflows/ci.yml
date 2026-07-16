@@ -130,7 +130,6 @@ jobs:
           python3.14 -m venv venv
           source venv/bin/activate
           poetry env use python3.14
-          pip install psycopg2-binary
           poetry install --no-interaction --no-root
         EOF
 
