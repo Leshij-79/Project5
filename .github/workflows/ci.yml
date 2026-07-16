@@ -119,7 +119,7 @@ jobs:
 
     - name: Copy project files to server
       run: |
-        rsync -avz --rsync-path="sudo rsync" --exclude '__pycache__' . ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:${{ secrets.DEPLOY_DIR }}
+        rsync -avz --rsync-path="sudo rsync" --delete --exclude '__pycache__' . ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:${{ secrets.DEPLOY_DIR }}
 
     - name: Deploy application
       run: |
@@ -147,6 +147,7 @@ jobs:
           pip install django-celery-beat
           pip install dotenv
           pip install stripe
+          pip install pillow
           mkdir -p staticfiles
           export STATIC_ROOT=${{ secrets.DEPLOY_DIR }}/staticfiles
           export DJANGO_SETTINGS_MODULE=config.settings
