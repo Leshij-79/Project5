@@ -128,7 +128,7 @@ jobs:
       - name: Copy project files to server
         run: |
           rsync -avzu --rsync-path="sudo rsync" \
-          --update \
+          --delete \
           --exclude '__pycache__' \
           --exclude='.env' \
           --exclude='venv' \
