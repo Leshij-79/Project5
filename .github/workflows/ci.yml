@@ -151,9 +151,6 @@ jobs:
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
             cd ${{ secrets.DEPLOY_DIR }}
             # Загружаем переменные из .env
-            set -a
-            source .env
-            set +a
             export DJANGO_SETTINGS_MODULE=config.settings
             export STATIC_ROOT=${{ secrets.DEPLOY_DIR }}/staticfiles
             sudo chown -R ${{ secrets.SSH_USER }}:${{ secrets.SSH_USER }} .
@@ -179,6 +176,9 @@ jobs:
             pip install dotenv
             pip install stripe
             pip install pillow
+            set -a
+            source .env
+            set +a
             mkdir -p staticfiles
             python manage.py migrate
             python manage.py collectstatic --noinput
