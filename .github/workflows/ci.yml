@@ -172,7 +172,9 @@ jobs:
             python3.14 -m venv venv
             source venv/bin/activate
             python3.14 -m pip install --upgrade pip
-            
+            pip install psycopg2-binary
+            pip install -r requirements.txt
+          
             mkdir -p staticfiles
             python manage.py migrate
             python manage.py collectstatic --noinput
