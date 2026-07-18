@@ -180,5 +180,5 @@ jobs:
             mkdir -p staticfiles
             python manage.py migrate
             python manage.py collectstatic --noinput
-            sudo systemctl restart myapp.service
+            #sudo systemctl restart myapp.service
           EOF
