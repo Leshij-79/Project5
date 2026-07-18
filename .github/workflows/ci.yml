@@ -115,6 +115,22 @@ jobs:
         run: |
           mkdir -p ~/.ssh
           ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+          
+      - name: Debug repository structure
+        run: |
+          echo "=== REPOSITORY STRUCTURE ==="
+          pwd
+          ls -la
+          echo "=== FINDING manage.py ==="
+          find . -name "manage.py" -type f 2>/dev/null || echo "manage.py not found"
+
+      - name: Fix permissions on server
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+            sudo mkdir -p ${{ secrets.DEPLOY_DIR }}
+            sudo chown -R ${{ secrets.SSH_USER }}:${{ secrets.SSH_USER }} ${{ secrets.DEPLOY_DIR }}
+            sudo chmod -R 755 ${{ secrets.DEPLOY_DIR }}
+          EOF
 
       - name: Copy project files to server
         run: |
