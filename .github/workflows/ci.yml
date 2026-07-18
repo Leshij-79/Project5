@@ -118,11 +118,55 @@ jobs:
 
       - name: Copy project files to server
         run: |
-          rsync -avzu --rsync-path="sudo rsync" \
-          --update \
-          --exclude '__pycache__' \
-          --chown=${{ secrets.SSH_USER }}:${{ secrets.SSH_USER }} \
-          ./ ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:${{ secrets.DEPLOY_DIR }}
+          echo "=== CURRENT DIRECTORY ==="
+          pwd
+          echo "=== LISTING FILES ==="
+          ls -la
+          echo "=== CHECKING FOR manage.py ==="
+          find . -name "manage.py" -type f
+          echo "=== CHECKING FOR requirements.txt ==="
+          find . -name "requirements.txt" -type f
+
+          echo "=== CREATING TAR ARCHIVE ==="
+          # Создаем архив со всеми файлами из корня и подпапок
+          tar -czf /tmp/project.tar.gz \
+            --exclude='__pycache__' \
+            --exclude='.env' \
+            --exclude='venv' \
+            --exclude='*.pyc' \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='media' \
+            --exclude='staticfiles' \
+            .
+
+          echo "=== TAR ARCHIVE SIZE ==="
+          ls -lh /tmp/project.tar.gz
+
+          echo "=== TAR ARCHIVE CONTENT (first 20 files) ==="
+          tar -tzf /tmp/project.tar.gz | head -20
+
+          echo "=== COPYING TO SERVER ==="
+          scp -o StrictHostKeyChecking=no /tmp/project.tar.gz ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:${{ secrets.DEPLOY_DIR }}/
+
+          echo "=== EXTRACTING ON SERVER ==="
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EXTRACT'
+            cd ${{ secrets.DEPLOY_DIR }}
+            echo "=== FILES BEFORE EXTRACT ==="
+            ls -la
+            echo "=== EXTRACTING ARCHIVE ==="
+            tar -xzf project.tar.gz --overwrite
+            echo "=== REMOVING ARCHIVE ==="
+            rm -f project.tar.gz
+            echo "=== FILES AFTER EXTRACT ==="
+            ls -la
+            echo "=== CHECKING KEY FILES ==="
+            test -f manage.py && echo "✅ manage.py exists" || echo "❌ manage.py NOT found"
+            test -f requirements.txt && echo "✅ requirements.txt exists" || echo "❌ requirements.txt NOT found"
+          EXTRACT
+
+          echo "=== CLEANING UP ==="
+          rm -f /tmp/project.tar.gz
 
 
 
