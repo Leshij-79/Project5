@@ -146,7 +146,8 @@ jobs:
           
             export DB_NAME="${{ secrets.DB_NAME }}"
             export DB_USER="${{ secrets.DB_USER }}"
-            export DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
+            # export DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
+            export PGPASSWORD="${{ secrets.DB_PASSWORD }}"
             export DB_HOST="${{ secrets.DB_HOST }}"
             export DB_PORT="${{ secrets.DB_PORT }}"
             export SECRET_KEY="${{ secrets.SECRET_KEY }}"
