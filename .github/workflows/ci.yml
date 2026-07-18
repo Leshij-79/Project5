@@ -34,6 +34,9 @@ jobs:
     steps:
     - name: Check out code
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Загружаем всю историю
+        ref: main       # Явно указываем ветку
 
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -115,6 +118,12 @@ jobs:
         run: |
           mkdir -p ~/.ssh
           ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Загружаем всю историю
+          ref: main       # Явно указываем ветку
           
       - name: Debug repository structure
         run: |
