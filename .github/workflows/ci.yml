@@ -116,83 +116,42 @@ jobs:
           mkdir -p ~/.ssh
           ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
 
-      - name: Debug - check local files
+
+      - name: Copy project files to server
         run: |
-          echo "=== CURRENT DIRECTORY ==="
-          pwd
-          echo "=== LISTING ALL FILES ==="
-          ls -la
-          echo "=== CHECKING KEY FILES ==="
-          [ -f manage.py ] && echo "✅ manage.py exists" || echo "❌ manage.py NOT found"
-          [ -f requirements.txt ] && echo "✅ requirements.txt exists" || echo "❌ requirements.txt NOT found"
-          [ -f pyproject.toml ] && echo "✅ pyproject.toml exists" || echo "❌ pyproject.toml NOT found"
-
-      - name: Create directory on server
-        run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "sudo mkdir -p ${{ secrets.DEPLOY_DIR }} && sudo chown -R ${{ secrets.SSH_USER }}:${{ secrets.SSH_USER }} ${{ secrets.DEPLOY_DIR }}"
-
-      - name: Copy project files to server using tar
-        run: |
-          echo "=== CREATING TAR ARCHIVE ==="
-          # Создаем архив со всеми файлами
-          tar -czf project.tar.gz \
-            --exclude='__pycache__' \
-            --exclude='.env' \
-            --exclude='venv' \
-            --exclude='*.pyc' \
-            --exclude='.git' \
-            --exclude='.github' \
-            --exclude='staticfiles' \
-            --exclude='media' \
-            --exclude='project.tar.gz' \
-            .
-
-          echo "=== TAR ARCHIVE CREATED ==="
-          ls -lh project.tar.gz
-
-          echo "=== COPYING TO SERVER ==="
-          scp -o StrictHostKeyChecking=no project.tar.gz ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:${{ secrets.DEPLOY_DIR }}/
-
-          echo "=== EXTRACTING ON SERVER ==="
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "cd ${{ secrets.DEPLOY_DIR }} && tar -xzf project.tar.gz && rm project.tar.gz"
-
-          echo "=== CLEANING UP ==="
-          rm project.tar.gz
-
-      - name: Debug - check files on server
-        run: |
-          echo "=== FILES ON SERVER ==="
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "ls -la ${{ secrets.DEPLOY_DIR }}"
-          echo "=== CHECKING KEY FILES ON SERVER ==="
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "test -f ${{ secrets.DEPLOY_DIR }}/manage.py && echo '✅ manage.py exists on server' || echo '❌ manage.py NOT found on server'"
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "test -f ${{ secrets.DEPLOY_DIR }}/requirements.txt && echo '✅ requirements.txt exists on server' || echo '❌ requirements.txt NOT found on server'"
+          rsync -avz --rsync-path="sudo rsync" --exclude '__pycache__' . ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:${{ secrets.DEPLOY_DIR }}
 
       - name: Deploy application
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
             cd ${{ secrets.DEPLOY_DIR }}
-            echo "=== CURRENT DIRECTORY ==="
-            pwd
-            echo "=== FILES BEFORE DEPLOY ==="
-            ls -la
-
-            # Проверяем наличие manage.py
-            if [ ! -f manage.py ]; then
-              echo "❌ ERROR: manage.py not found!"
-              exit 1
-            fi
-
-            sudo chown -R ${{ secrets.SSH_USER }}:${{ secrets.SSH_USER }} .
+            sudo chown -R $USER:$USER .
             sudo chmod -R 755 .
             rm -rf venv
-            python3.12 -m venv venv
+            python3.14 -m venv venv
             source venv/bin/activate
-            pip install --upgrade pip
+            python3.14 -m pip install --upgrade pip
+            pip install psycopg2-binary
             pip install -r requirements.txt
+            pip install django
+            pip install djangorestframework
+            pip install django-filter
+            pip install djangorestframework-simplejwt
+            pip install coverage
+            pip install drf-spectacular
+            pip install drf-yasg
+            pip install django-cors-headers
+            pip install redis
+            pip install celery
+            pip install eventlet
+            pip install django-celery-beat
+            pip install dotenv
+            pip install stripe
             pip install pillow
             mkdir -p staticfiles
             export STATIC_ROOT=${{ secrets.DEPLOY_DIR }}/staticfiles
             export DJANGO_SETTINGS_MODULE=config.settings
             python manage.py migrate
             python manage.py collectstatic --noinput
+            sudo systemctl restart myapp.service
           EOF
