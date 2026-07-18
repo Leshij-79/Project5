@@ -118,7 +118,11 @@ jobs:
 
       - name: Copy project files to server
         run: |
-          rsync -avz --rsync-path="sudo rsync" --update --exclude '__pycache__' . ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:${{ secrets.DEPLOY_DIR }}
+          rsync -avzu --rsync-path="sudo rsync" \
+          --delete \
+          --exclude '__pycache__' \
+          --chown=${{ secrets.SSH_USER }}:${{ secrets.SSH_USER }} \
+          ./ ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:${{ secrets.DEPLOY_DIR }}
 
 
 
