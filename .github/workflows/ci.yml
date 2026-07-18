@@ -71,9 +71,9 @@ jobs:
         echo "STRIPE_SECRET_KEY=sk_test_ci_dummy_key" >> $GITHUB_ENV
         echo "DB_NAME=lms" >> $GITHUB_ENV
         echo "DB_USER=postgres" >> $GITHUB_ENV
-        echo "PASSWORD=postgres" >> $GITHUB_ENV
+        echo "DB_PASSWORD=postgres" >> $GITHUB_ENV
         echo "DB_HOST=localhost" >> $GITHUB_ENV
-        echo "PORT=5432" >> $GITHUB_ENV
+        echo "DB_PORT=5432" >> $GITHUB_ENV
         echo "EMAIL_HOST_USER=test@example.com" >> $GITHUB_ENV
         echo "EMAIL_HOST_PASSWORD=test_password" >> $GITHUB_ENV
         echo "CELERY_BROKER_URL=redis://localhost:6379/0" >> $GITHUB_ENV
