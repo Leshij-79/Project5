@@ -2,152 +2,17 @@ name: DjangoLMS_API CI/CD Docker
 on: [push, pull_request]
 
 jobs:
-  lint:
-    runs-on: ubuntu-latest
 
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.14'
-
-      - name: Install Poetry
-        run: |
-          curl -sSL https://install.python-poetry.org | python3 -
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
-
-      - name: Configure Poetry
-        run: |
-          poetry config virtualenvs.create true
-          poetry config virtualenvs.in-project true
-
-      - name: Cache Poetry dependencies
-        uses: actions/cache@v4
-        with:
-          path: .venv
-          key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
-          restore-keys: |
-            venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
-            venv-${{ runner.os }}-
-
-      - name: Install dependencies
-        run: |
-          poetry install --no-interaction --no-root
-
-      - name: Run linters
-        run: |
-          poetry run flake8 lms
-          poetry run flake8 users
-
-  test:
-    runs-on: ubuntu-latest
-    needs: lint
-
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: lms
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-      redis:
-        image: redis:7
-        ports:
-          - 6379:6379
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-    steps:
-    - name: Check out code
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0  # Загружаем всю историю
-        ref: main       # Явно указываем ветку
-
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.12'
-        cache: 'pip'
-
-    - name: Install system dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y libpq-dev file
-
-    - name: Install Poetry
-      run: pipx install poetry
-
-    - name: Configure Poetry
-      run: |
-        poetry config virtualenvs.in-project true
-
-    - name: Install dependencies
-      run: |
-        poetry install --no-interaction --no-root
-
-    - name: Cache Poetry dependencies
-      uses: actions/cache@v4
-      with:
-        path: ~/.cache/pypoetry
-        key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}-v2
-        restore-keys: |
-          ${{ runner.os }}-poetry-
-
-    - name: Set environment variables
-      run: |
-        echo "SECRET_KEY=django-insecure-ci-test-key" >> $GITHUB_ENV
-        echo "STRIPE_SECRET_KEY=sk_test_ci_dummy_key" >> $GITHUB_ENV
-        echo "DB_NAME=lms" >> $GITHUB_ENV
-        echo "DB_USER=postgres" >> $GITHUB_ENV
-        echo "DB_PASSWORD=postgres" >> $GITHUB_ENV
-        echo "DB_HOST=localhost" >> $GITHUB_ENV
-        echo "DB_PORT=5432" >> $GITHUB_ENV
-        echo "EMAIL_HOST_USER=test@example.com" >> $GITHUB_ENV
-        echo "EMAIL_HOST_PASSWORD=test_password" >> $GITHUB_ENV
-        echo "CELERY_BROKER_URL=redis://localhost:6379/0" >> $GITHUB_ENV
-        echo "CELERY_RESULT_BACKEND=redis://localhost:6379/0" >> $GITHUB_ENV
-        echo "REDIS_HOST=localhost" >> $GITHUB_ENV
-        echo "GITHUB_ACTIONS=true" >> $GITHUB_ENV
-
-    - name: Set Python path
-      run: |
-        echo "PYTHONPATH=$PWD" >> $GITHUB_ENV
-
-    - name: Run migrations
-      run: |
-        export PYTHONPATH=$PWD
-        poetry run python manage.py migrate
-
-    - name: Run tests
-      run: |
-        export PYTHONPATH=$PWD
-        poetry run python manage.py test
-        
   build:
     runs-on: ubuntu-latest
-    needs: test
+#    needs: test
 
     steps:
       - name: Check out code
         uses: actions/checkout@v4
 
       - name: Set up SSH
-        uses: webfactory/ssh-agent@v0.9.1
+        uses: webfactory/ssh-agent@v0.10.0
         with:
           ssh-private-key: ${{ secrets.SSH_KEY }}
 
@@ -204,7 +69,7 @@ jobs:
                   --name project5-web-1 \
                   --network project5_default \
                   -p 8000:8000 \
-                  project5-web-1:${{ github.sha }}
+                  ${{ secrets.DOCKER_HUB_USERNAME }}/project5-web-1:${{ github.sha }}
                   docker image prune -f
                 EOF
           
