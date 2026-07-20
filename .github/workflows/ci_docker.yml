@@ -195,9 +195,13 @@ jobs:
         run: |
                 ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
                   echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
-                  docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/project5-web-1:${{ github.sha }}
                   docker stop project5-web-1 || true
                   docker rm project5-web-1 || true
-                  docker run -d --name project5-web-1 -p 8000:8000 ${{ secrets.DOCKER_HUB_USERNAME }}/project5-web-1:${{ github.sha }}
+                  docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/project5-web-1:${{ github.sha }}
+                  docker run -d \
+                  --name project5-web-1 \
+                  -p 8000:8000 \
+                  ${{ secrets.DOCKER_HUB_USERNAME }}/project5-web-1:${{ github.sha }}
+                  docker image prune -f
                 EOF
-
+          
