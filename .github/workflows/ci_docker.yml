@@ -72,6 +72,7 @@ jobs:
             --network project5_default \
             -p 8000:8000 \
             --env-file .env \
+            --network-alias web \
             project5-web
             docker image prune -f
           EOF
