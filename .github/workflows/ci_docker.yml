@@ -191,6 +191,9 @@ jobs:
         with:
             ssh-private-key: ${{ secrets.SSH_KEY }}
 
+      - name: Log in to Docker Hub
+        run: echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
+
       - name: Deploy to Server
         run: |
                 ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
