@@ -191,12 +191,10 @@ jobs:
         with:
             ssh-private-key: ${{ secrets.SSH_KEY }}
 
-      - name: Log in to Docker Hub
-        run: echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
-
       - name: Deploy to Server
         run: |
                 ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+                  echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
                   docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/project5-web-1:${{ github.sha }}
                   docker stop project5-web-1 || true
                   docker rm project5-web-1 || true
