@@ -198,6 +198,6 @@ jobs:
                   docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/project5-web-1:${{ github.sha }}
                   docker stop project5-web-1 || true
                   docker rm project5-web-1 || true
-                  docker run -d --name project5-web-1 -p 80:8000 ${{ secrets.DOCKER_HUB_USERNAME }}/project5-web-1:${{ github.sha }}
+                  docker run -d --name project5-web-1 -p 8000:8000 ${{ secrets.DOCKER_HUB_USERNAME }}/project5-web-1:${{ github.sha }}
                 EOF
 
