@@ -176,7 +176,7 @@ jobs:
         run: echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
 
       - name: Build Docker image
-        run: docker build -t project5-web-1:${{ github.sha }} .
+        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/project5-web-1:${{ github.sha }} .
 
       - name: Push Docker image to Docker Hub
         run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/project5-web-1:${{ github.sha }}
@@ -198,10 +198,11 @@ jobs:
 
                   docker stop project5-web-1 || true 
                   docker rm project5-web-1 || true
-                  docker pull project5-web-1:${{ github.sha }}
+                  docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/project5-web-1:${{ github.sha }}
 
                   docker run -d \
                   --name project5-web-1 \
+                  --network project5_default \
                   -p 8000:8000 \
                   project5-web-1:${{ github.sha }}
                   docker image prune -f
