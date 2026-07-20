@@ -149,9 +149,9 @@ jobs:
       - name: Create .env file on server
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-          cd ${{ secrets.DEPLOY_DIR }}
-          sudo chown -R ${{ secrets.SSH_USER }}:${{ secrets.SSH_USER }} .
-          sudo chmod -R 755 .
+            cd ${{ secrets.DEPLOY_DIR }}
+            sudo chown -R ${{ secrets.SSH_USER }}:${{ secrets.SSH_USER }} .
+            sudo chmod -R 755 .
             echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" > .env
             echo "STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}" >> .env
             echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
@@ -168,15 +168,16 @@ jobs:
             set -a
             source .env
             set +a
+          EOF
 
       - name: Log in to Docker Hub
         run: echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
 
       - name: Build Docker image
-        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/project5-web:${{ github.sha }} .
+        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/project5-web-1:${{ github.sha }} .
 
       - name: Push Docker image to Docker Hub
-        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/project5-web:${{ github.sha }}
+        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/project5-web-1:${{ github.sha }}
 
   deploy:
     runs-on: ubuntu-latest
@@ -191,9 +192,9 @@ jobs:
       - name: Deploy to Server
         run: |
                 ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-                  docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/project5-web:${{ github.sha }}
-                  docker stop project5-web || true
-                  docker rm project5-web || true
-                  docker run -d --name project5-web -p 80:8000 ${{ secrets.DOCKER_HUB_USERNAME }}/project5-web:${{ github.sha }}
+                  docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/project5-web-1:${{ github.sha }}
+                  docker stop project5-web-1 || true
+                  docker rm project5-web-1 || true
+                  docker run -d --name project5-web-1 -p 80:8000 ${{ secrets.DOCKER_HUB_USERNAME }}/project5-web-1:${{ github.sha }}
                 EOF
 
