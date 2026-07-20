@@ -11,6 +11,14 @@ RUN poetry config virtualenvs.create false && poetry install --no-interaction --
 
 COPY . .
 
+
+# Создаем директорию для статики
+RUN mkdir -p /app/staticfiles
+
+# Устанавливаем переменную окружения
+ENV STATIC_ROOT=/app/staticfiles
+
+
 EXPOSE 8000
 
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

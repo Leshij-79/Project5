@@ -75,6 +75,8 @@ jobs:
             echo "CELERY_BROKER_URL=${{ secrets.CELERY_BROKER_URL }}" >> .env
             echo "CELERY_RESULT_BACKEND=${{ secrets.CELERY_RESULT_BACKEND }}" >> .env
             echo "REDIS_HOST=${{ secrets.REDIS_HOST }}" >> .env
+            echo "STATIC_ROOT=/code/staticfiles" >> .env
+            docker volume create static_volume || true
 
 
             docker stop project5-web-1 || true 
@@ -89,7 +91,19 @@ jobs:
             -p 8000:8000 \
             --env-file .env \
             --network-alias web \
+            -v static_volume:/code/staticfiles \
             project5-web
+          
+          
+            # Создаем директорию для статики внутри контейнера
+            docker exec project5-web-1 mkdir -p /app/staticfiles
+  
+            # Собираем статику
+            echo "=== Collecting static files ==="
+            docker exec project5-web-1 python manage.py collectstatic --noinput
+          
+          
+          
             docker restart project5-nginx-1
             docker image prune -f
           DEPLOY_EOF
