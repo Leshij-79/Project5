@@ -8,9 +8,9 @@ services:
       - DEBUG=True
       - DB_HOST=db
       - DB_NAME=${DB_NAME}
-      - PORT=${PORT}
+      - DB_PORT=${DB_PORT}
       - DB_USER=${DB_USER}
-      - DB_PASSWORD=${PASSWORD}
+      - DB_PASSWORD=${DB_PASSWORD}
       - REDIS_HOST=${REDIS_HOST}
       - CELERY_BROKER_URL=${CELERY_BROKER_URL}
       - CELERY_RESULT_BACKEND=${CELERY_RESULT_BACKEND}
@@ -32,7 +32,7 @@ services:
       - .env
     environment:
       - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${PASSWORD}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${DB_NAME}
     expose:
       - "5432"  # Только внутри сети, не наружу
