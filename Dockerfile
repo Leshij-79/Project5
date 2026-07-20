@@ -13,10 +13,10 @@ COPY . .
 
 
 # Создаем директорию для статики
-RUN mkdir -p /app/staticfiles
+RUN mkdir -p /code/static
 
 # Устанавливаем переменную окружения
-ENV STATIC_ROOT=/app/staticfiles
+ENV STATIC_ROOT=/code/static
 
 
 EXPOSE 8000
