@@ -179,7 +179,7 @@ jobs:
         run: docker build -t project5-web-1:${{ github.sha }} .
 
       - name: Push Docker image to Docker Hub
-        run: docker push project5-web-1:${{ github.sha }}
+        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/project5-web-1:${{ github.sha }}
 
   deploy:
     runs-on: ubuntu-latest
