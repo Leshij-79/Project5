@@ -130,7 +130,7 @@ jobs:
           --exclude='.git' \
           --exclude='.github' \
           --exclude='media' \
-          --exclude='staticfiles' \
+
           --chown=${{ secrets.SSH_USER }}:${{ secrets.SSH_USER }} \
           ./ ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:${{ secrets.DEPLOY_DIR }}
 
@@ -151,6 +151,10 @@ jobs:
             echo "CELERY_BROKER_URL=${{ secrets.CELERY_BROKER_URL }}" >> .env
             echo "CELERY_RESULT_BACKEND=${{ secrets.CELERY_RESULT_BACKEND }}" >> .env
             echo "REDIS_HOST=${{ secrets.REDIS_HOST }}" >> .env
+          
+            echo "STATIC_ROOT=/code/static" >> .env
+            echo "DJANGO_SETTINGS_MODULE=config.settings" >> .env
+          
             # ВАЖНО: Загружаем переменные из .env в окружение
             set -a
             source .env
