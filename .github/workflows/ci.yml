@@ -159,7 +159,7 @@ jobs:
            
           
             export DJANGO_SETTINGS_MODULE=config.settings
-            export STATIC_ROOT=${{ secrets.DEPLOY_DIR }}/staticfiles
+#            export STATIC_ROOT=${{ secrets.DEPLOY_DIR }}/staticfiles
             sudo chown -R ${{ secrets.SSH_USER }}:${{ secrets.SSH_USER }} .
             sudo chmod -R 755 .
             rm -rf venv
@@ -173,5 +173,14 @@ jobs:
             cp -r staticfiles/* ${{ secrets.DEPLOY_DIR }}/staticfiles/ 2>/dev/null || true
             python manage.py migrate
             python manage.py collectstatic --noinput
+          
+            # Копируем статику в место для nginx
+            sudo mkdir -p /usr/share/nginx/html/static
+            sudo cp -r staticfiles/* /usr/share/nginx/html/static/ 2>/dev/null || true
+            sudo chown -R ${{ secrets.SSH_USER }}:${{ secrets.SSH_USER }} /usr/share/nginx/html/static
+          
+            # Перезапускаем контейнеры
+            docker-compose down
+            docker-compose up -d --build
             #sudo systemctl restart myapp.service
           EOF
