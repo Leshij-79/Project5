@@ -97,7 +97,7 @@ jobs:
             -p 8000:8000 \
             --env-file .env \
             --network-alias web \
-            -v static_volume:/code/static \
+            -v static_volume:/code/staticfiles \
             project5-web
           
           
@@ -106,12 +106,12 @@ jobs:
             --network project5_default \
             -p 80:80 \
             -v $(pwd)/nginx/nginx.conf:/etc/nginx/nginx.conf:ro \
-            -v static_volume:/usr/share/nginx/html/static \
+            -v static_volume:/usr/share/nginx/html/staticfiles \
             nginx:alpine
           
           
             # Создаем директорию для статики внутри контейнера
-            docker exec project5-web-1 mkdir -p /code/static
+            docker exec project5-web-1 mkdir -p /code/staticfiles
   
   
             echo "=== STATIC_ROOT ==="
@@ -125,10 +125,10 @@ jobs:
           
             # Проверяем результат
             echo "=== Static files in container ==="
-            docker exec project5-web-1 ls -la /code/static/admin/css/ || echo "No admin/css in container!"
+            docker exec project5-web-1 ls -la /code/staticfiles/admin/css/ || echo "No admin/css in container!"
   
             echo "=== Static files in volume ==="
-            docker run --rm -v static_volume:/data alpine ls -la /data/admin/css/ || echo "No admin/css in volume!"
+            docker run --rm -v static_volume:/staticfiles alpine ls -la /staticfiles/admin/css/ || echo "No admin/css in volume!"
           
           
             docker restart project5-nginx-1
