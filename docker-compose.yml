@@ -99,7 +99,7 @@ services:
     restart: unless-stopped
 
   nginx:
-    image: nginx:alpine
+#    image: nginx:alpine
     build:
       context: .
       dockerfile: Dockerfile.nginx
