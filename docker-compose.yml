@@ -100,9 +100,9 @@ services:
 
   nginx:
     image: nginx:alpine
-    build:
-      context: .
-      dockerfile: Dockerfile.nginx
+#    build:
+#      context: .
+#      dockerfile: Dockerfile.nginx
     ports:
       - "80:80"
     volumes:
