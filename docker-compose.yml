@@ -106,8 +106,10 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
       - ./html:/usr/share/nginx/html
+      - ./staticfiles:/var/www/Project5/staticfiles:ro  # Добавлен volume для статики
+      - ./media:/var/www/Project5/media:ro  # Если есть медиа файлы
     depends_on:
       - web
 
