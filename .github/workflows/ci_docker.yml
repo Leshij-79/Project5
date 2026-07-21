@@ -132,7 +132,7 @@ jobs:
             docker run --rm -v static_volume:/data alpine ls -la /data/admin/css/ || echo "No admin/css in volume!"
           
           
-#            docker restart project5-nginx-1
+            docker restart project5-nginx-1
             docker image prune -a -f
           DEPLOY_EOF
           
