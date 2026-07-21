@@ -159,7 +159,7 @@ jobs:
            
           
             export DJANGO_SETTINGS_MODULE=config.settings
-#            export STATIC_ROOT=${{ secrets.DEPLOY_DIR }}/staticfiles
+
             sudo chown -R ${{ secrets.SSH_USER }}:${{ secrets.SSH_USER }} .
             sudo chmod -R 755 .
             rm -rf venv
