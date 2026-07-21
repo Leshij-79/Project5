@@ -117,8 +117,7 @@ jobs:
   
             echo "=== STATIC_ROOT ==="
             docker exec project5-web-1 python manage.py shell -c "from django.conf import settings; print(settings.STATIC_ROOT)"
-  
-  
+    
   
             # Собираем статику
             echo "=== Collecting static files ==="
