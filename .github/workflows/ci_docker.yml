@@ -105,7 +105,7 @@ jobs:
             --name project5-nginx-1 \
             --network project5_default \
             -p 80:80 \
-            -v $(pwd)/nginx.conf:/etc/nginx/nginx.conf:ro \
+            -v $(pwd)/nginx/nginx.conf:/etc/nginx/nginx.conf:ro \
             -v static_volume:/usr/share/nginx/html/static \
             nginx:alpine
           
@@ -120,6 +120,6 @@ jobs:
           
           
             docker restart project5-nginx-1
-            docker image prune -f
+            docker image prune -a -f
           DEPLOY_EOF
           
