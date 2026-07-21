@@ -14,7 +14,6 @@ services:
       - REDIS_HOST=${REDIS_HOST}
       - CELERY_BROKER_URL=${CELERY_BROKER_URL}
       - CELERY_RESULT_BACKEND=${CELERY_RESULT_BACKEND}
-      - STATIC_ROOT=/code/static
     volumes:
       - .:/code
       - static_volume:/code/static
