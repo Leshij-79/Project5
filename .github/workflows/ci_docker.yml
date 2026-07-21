@@ -78,18 +78,13 @@ jobs:
 
             docker volume create static_volume || true
 
-
             docker stop project5-web-1 || true 
             docker rm project5-web-1 || true
           
             docker stop project5-nginx-1
             docker rm project5-nginx-1
           
-          
-          
             docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/project5-web-1:${{ github.sha }}
-
-            docker rename ${{ secrets.DOCKER_HUB_USERNAME }}/project5-web-1:${{ github.sha }} project5-web
 
             docker run -d \
             --name project5-web-1 \
@@ -99,7 +94,6 @@ jobs:
             --network-alias web \
             -v static_volume:/code/staticfiles \
             project5-web
-          
           
             docker run -d \
             --name project5-nginx-1 \
