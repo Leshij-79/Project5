@@ -75,8 +75,7 @@ jobs:
             echo "CELERY_BROKER_URL=${{ secrets.CELERY_BROKER_URL }}" >> .env
             echo "CELERY_RESULT_BACKEND=${{ secrets.CELERY_RESULT_BACKEND }}" >> .env
             echo "REDIS_HOST=${{ secrets.REDIS_HOST }}" >> .env
-            echo "STATIC_ROOT=/code/static" >> .env
-            echo "DJANGO_SETTINGS_MODULE=config.settings" >> .env
+
             docker volume create static_volume || true
 
 
