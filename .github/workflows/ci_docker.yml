@@ -76,6 +76,7 @@ jobs:
             echo "CELERY_RESULT_BACKEND=${{ secrets.CELERY_RESULT_BACKEND }}" >> .env
             echo "REDIS_HOST=${{ secrets.REDIS_HOST }}" >> .env
             echo "STATIC_ROOT=/code/static" >> .env
+            echo "DJANGO_SETTINGS_MODULE=config.settings" >> .env
             docker volume create static_volume || true
 
 
@@ -113,13 +114,26 @@ jobs:
             # Создаем директорию для статики внутри контейнера
             docker exec project5-web-1 mkdir -p /code/static
   
+  
+            echo "=== STATIC_ROOT ==="
+            docker exec project5-web-1 python manage.py shell -c "from django.conf import settings; print(settings.STATIC_ROOT)"
+  
+  
+  
             # Собираем статику
             echo "=== Collecting static files ==="
             docker exec project5-web-1 python manage.py collectstatic --noinput
           
           
+            # Проверяем результат
+            echo "=== Static files in container ==="
+            docker exec project5-web-1 ls -la /code/static/admin/css/ || echo "No admin/css in container!"
+  
+            echo "=== Static files in volume ==="
+            docker run --rm -v static_volume:/data alpine ls -la /data/admin/css/ || echo "No admin/css in volume!"
           
-            docker restart project5-nginx-1
+          
+#            docker restart project5-nginx-1
             docker image prune -a -f
           DEPLOY_EOF
           
