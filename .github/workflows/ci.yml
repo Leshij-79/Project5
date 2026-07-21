@@ -130,7 +130,6 @@ jobs:
           --exclude='.git' \
           --exclude='.github' \
           --exclude='media' \
-
           --chown=${{ secrets.SSH_USER }}:${{ secrets.SSH_USER }} \
           ./ ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:${{ secrets.DEPLOY_DIR }}
 
