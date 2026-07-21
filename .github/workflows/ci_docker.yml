@@ -137,12 +137,7 @@ jobs:
       run: |
         export PYTHONPATH=$PWD
         poetry run python manage.py test
-        
 
-
-
-
-docker run -d --name project5-web-1 --network project5_default -p 8000:8000 project5-web-1:${{ github.sha }}
   build:
     runs-on: ubuntu-latest
 #    needs: test
